@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Rental - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        #ai-assistant-toggle {
+            aspect-ratio: 1/1;
+            border-radius: 50% !important;
+            min-width: 80px;
+            min-height: 80px;
+            max-width: 80px;
+            max-height: 80px;
+            padding: 0;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15), 0 1.5px 4px rgba(0,0,0,0.08);
+            border: 4px solid #fff;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        #ai-assistant-toggle:hover {
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.25), 0 2px 8px rgba(0,0,0,0.12);
+            transform: scale(1.07);
+        }
+        #ai-assistant-toggle i {
+            font-size: 2.5rem;
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-2xl font-['Pacifico'] text-primary">TTravels</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="/index.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="/flights" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Flights</a>
+                        <a href="/hotels.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Hotels</a>
+                        <a href="/trains" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Trains</a>
+                        <a href="/buses" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Buses</a>
+                        <a href="/cars" class="text-primary-600 hover:text-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Cars</a>
+                        <a href="/explore" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Explore</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6 space-x-3">
+                        <a href="/dashboard" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Trips</a>
+                        {% if logged_in %}
+                            <span class="text-gray-700 px-3 py-2 text-sm">Welcome, {{ username }}</span>
+                            <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Logout</a>
+                        {% else %}
+                            <a href="/login" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Login</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-primary-600 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden absolute top-16 left-0 w-full bg-white border-t shadow-lg z-40">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="/index.html" class="text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="/flights" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Flights</a>
+                <a href="/hotels.html" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Hotels</a>
+                <a href="/trains" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Trains</a>
+                <a href="/buses" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Buses</a>
+                <a href="/cars" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Cars</a>
+                <a href="/explore" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="/dashboard" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">My Trips</a>
+                {% if logged_in %}
+                    <a href="/logout" class="text-red-600 hover:text-red-700 block px-3 py-2 rounded-md text-base font-medium">Logout</a>
+                {% else %}
+                    <a href="/login" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Car Rental Search Section -->
+    <section class="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl font-bold mb-8 text-center">Rent a Car</h1>
+            
+            <!-- Search Form -->
+            <div class="bg-white rounded-lg shadow-lg p-6 text-gray-900">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Pickup Location</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter pickup location">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Drop Location</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter drop location">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Pickup Date</label>
+                        <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Return Date</label>
+                        <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                    </div>
+                    <div class="flex items-end">
+                        <button id="searchCars" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
+                            Search Cars
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Car Categories Section -->
+    <section class="py-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Choose Your Car Category</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:shadow-md transition-all cursor-pointer car-category" data-category="hatchback">
+                    <div class="text-4xl mb-2">🚗</div>
+                    <h3 class="font-semibold text-gray-900">Hatchback</h3>
+                    <p class="text-sm text-gray-600">Compact & Economic</p>
+                </div>
+                <div class="text-center p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:shadow-md transition-all cursor-pointer car-category" data-category="sedan">
+                    <div class="text-4xl mb-2">🚙</div>
+                    <h3 class="font-semibold text-gray-900">Sedan</h3>
+                    <p class="text-sm text-gray-600">Comfortable & Spacious</p>
+                </div>
+                <div class="text-center p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:shadow-md transition-all cursor-pointer car-category" data-category="suv">
+                    <div class="text-4xl mb-2">🚐</div>
+                    <h3 class="font-semibold text-gray-900">SUV</h3>
+                    <p class="text-sm text-gray-600">Luxury & Powerful</p>
+                </div>
+                <div class="text-center p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:shadow-md transition-all cursor-pointer car-category" data-category="luxury">
+                    <div class="text-4xl mb-2">🏎️</div>
+                    <h3 class="font-semibold text-gray-900">Luxury</h3>
+                    <p class="text-sm text-gray-600">Premium Experience</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Car Results Section -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="loadingResults" class="hidden text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                <p class="mt-4 text-gray-600">Searching for available cars...</p>
+            </div>
+
+            <div id="carResults" class="hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Available Cars</h2>
+                
+                <!-- Filter Options -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                                <option>Car Type</option>
+                                <option>Rating</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Transmission</label>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>All</option>
+                                <option>Manual</option>
+                                <option>Automatic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Fuel Type</label>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>All</option>
+                                <option>Petrol</option>
+                                <option>Diesel</option>
+                                <option>Electric</option>
+                                <option>Hybrid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Car Cards -->
+                <div id="carCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Car cards will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">TTravels</h3>
+                    <p class="text-gray-300 mb-4">Your trusted travel companion for all your journey needs.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/index.html" class="text-gray-300 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="/flights" class="text-gray-300 hover:text-white transition-colors">Flights</a></li>
+                        <li><a href="/hotels.html" class="text-gray-300 hover:text-white transition-colors">Hotels</a></li>
+                        <li><a href="/trains" class="text-gray-300 hover:text-white transition-colors">Trains</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Customer Service</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="/dashboard" class="text-gray-300 hover:text-white transition-colors">My Bookings</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-300">&copy; 2025 TTravels. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Assistant -->
+    <!-- <div id="ai-assistant" class="fixed bottom-6 right-6 z-50">
+        <button id="ai-toggle" class="bg-primary-600 hover:bg-primary-700 text-white p-4 rounded-full shadow-lg transition-all duration-300 hover:scale-110">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+            </svg>
+        </button>
+        
+        <div id="ai-chat" class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-lg shadow-2xl border border-gray-200">
+            <div class="p-4 bg-primary-600 text-white rounded-t-lg">
+                <h3 class="font-semibold">Car Rental Assistant</h3>
+                <p class="text-sm text-blue-100">Need help renting a car?</p>
+            </div>
+            <div class="p-4 h-64 overflow-y-auto" id="chat-messages">
+                <div class="text-gray-600 text-sm">
+                    Hi! I can help you find the perfect car for your trip. What type of car are you looking for?
+                </div>
+            </div>
+            <div class="p-4 border-t">
+                <div class="flex space-x-2">
+                    <input type="text" id="chat-input" placeholder="Ask about car rentals..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                    <button id="send-message" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <script>
+        // Car rental specific JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            setupCarSearch();
+            setupCarCategories();
+        });
+
+        function setupCarSearch() {
+            const searchButton = document.getElementById('searchCars');
+            if (searchButton) {
+                searchButton.addEventListener('click', searchCars);
+            }
+        }
+
+        function setupCarCategories() {
+            const categoryCards = document.querySelectorAll('.car-category');
+            categoryCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    filterCarsByCategory(category);
+                });
+            });
+        }
+
+        function searchCars() {
+            const loadingResults = document.getElementById('loadingResults');
+            const carResults = document.getElementById('carResults');
+            
+            TTravelApp.showLoading(loadingResults);
+            carResults.classList.add('hidden');
+            
+            setTimeout(() => {
+                TTravelApp.hideLoading(loadingResults);
+                carResults.classList.remove('hidden');
+                displayCarResults();
+            }, 2000);
+        }
+
+        function filterCarsByCategory(category) {
+            TTravelApp.showToast(`Showing ${category} cars`, 'info');
+            searchCars();
+        }
+
+        function displayCarResults() {
+            const carCards = document.getElementById('carCards');
+            if (!carCards) return;
+            // Realistic Indian car rental rates (2025):
+            // Hatchback: ₹12/km, ₹1200/day; Sedan: ₹15/km, ₹1800/day; SUV: ₹20/km, ₹2500/day; MPV: ₹18/km, ₹2200/day; Luxury: ₹40/km, ₹5000/day
+            const mockCars = [
+                {
+                    name: 'Maruti Swift',
+                    category: 'Hatchback',
+                    image: 'https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Manual',
+                    fuel: 'Petrol',
+                    seats: 5,
+                    pricePerDay: 1200,
+                    ratePerKm: 12,
+                    rating: 4.2,
+                    features: ['AC', 'Music System', 'Power Steering'],
+                    available: true
+                },
+                {
+                    name: 'Honda City',
+                    category: 'Sedan',
+                    image: 'https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Automatic',
+                    fuel: 'Petrol',
+                    seats: 5,
+                    pricePerDay: 1800,
+                    ratePerKm: 15,
+                    rating: 4.5,
+                    features: ['AC', 'Music System', 'Power Steering', 'ABS'],
+                    available: true
+                },
+                {
+                    name: 'Mahindra XUV500',
+                    category: 'SUV',
+                    image: 'https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Manual',
+                    fuel: 'Diesel',
+                    seats: 7,
+                    pricePerDay: 2500,
+                    ratePerKm: 20,
+                    rating: 4.3,
+                    features: ['AC', 'Music System', 'Power Steering', 'ABS', '4WD'],
+                    available: true
+                },
+                {
+                    name: 'BMW 3 Series',
+                    category: 'Luxury',
+                    image: 'https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Automatic',
+                    fuel: 'Petrol',
+                    seats: 5,
+                    pricePerDay: 5000,
+                    ratePerKm: 40,
+                    rating: 4.8,
+                    features: ['AC', 'Premium Sound', 'Leather Seats', 'Sunroof', 'GPS'],
+                    available: false
+                },
+                {
+                    name: 'Hyundai Creta',
+                    category: 'SUV',
+                    image: 'https://images.pexels.com/photos/1719648/pexels-photo-1719648.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Automatic',
+                    fuel: 'Petrol',
+                    seats: 5,
+                    pricePerDay: 2500,
+                    ratePerKm: 20,
+                    rating: 4.4,
+                    features: ['AC', 'Music System', 'Power Steering', 'ABS', 'Airbags'],
+                    available: true
+                },
+                {
+                    name: 'Toyota Innova',
+                    category: 'MPV',
+                    image: 'https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Manual',
+                    fuel: 'Diesel',
+                    seats: 8,
+                    pricePerDay: 2200,
+                    ratePerKm: 18,
+                    rating: 4.6,
+                    features: ['AC', 'Music System', 'Power Steering', 'ABS', 'Spacious'],
+                    available: true
+                }
+            ];
+            carCards.innerHTML = mockCars.map(car => createCarCard(car)).join('');
+        }
+
+        function createCarCard(car) {
+            return `
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow ${!car.available ? 'opacity-75' : ''}">
+                    <div class="relative">
+                        <img src="${car.image}" alt="${car.name}" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 left-2 bg-primary-600 text-white px-2 py-1 rounded text-sm font-semibold">
+                            ${car.category}
+                        </div>
+                        ${!car.available ? `
+                            <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
+                                Not Available
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">${car.name}</h3>
+                                <div class="flex items-center mt-1">
+                                    <span class="bg-green-600 text-white px-2 py-1 rounded text-sm font-semibold mr-2">
+                                        ${car.rating}
+                                    </span>
+                                    <span class="text-sm text-gray-600">Rating</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-bold text-gray-900">${TTravelApp.formatCurrency(car.pricePerDay)}</p>
+                                <p class="text-sm text-gray-600">per day</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-4 mb-4 text-sm text-gray-600">
+                            <div class="text-center">
+                                <div class="font-medium">${car.transmission}</div>
+                                <div>Transmission</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="font-medium">${car.fuel}</div>
+                                <div>Fuel</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="font-medium">${car.seats} Seats</div>
+                                <div>Capacity</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex flex-wrap gap-1">
+                                ${car.features.map(feature => `
+                                    <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs">${feature}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button onclick="viewCarDetails('${car.name}')" class="flex-1 border border-primary-600 text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg font-medium transition-colors">
+                                View Details
+                            </button>
+                            <button onclick="bookCar('${car.name}')" 
+                                    class="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors ${!car.available ? 'opacity-50 cursor-not-allowed' : ''}"
+                                    ${!car.available ? 'disabled' : ''}>
+                                ${car.available ? 'Book Now' : 'Unavailable'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function viewCarDetails(carName) {
+            TTravelApp.showToast(`Viewing details for ${carName}`, 'info');
+            // In a real application, this would open a modal or navigate to details page
+        }
+
+        function bookCar(carName) {
+            // Find the selected car from mockCars array
+            const car = getCarByName(carName);
+            if (!car) return;
+            // Compose the full car object as expected by booking/car.html
+            // Use realistic rate_per_km and a reasonable default trip distance (e.g., 80 km)
+            const carData = {
+                make: car.name.split(' ')[0],
+                model: car.name.split(' ').slice(1).join(' '),
+                type: car.category,
+                capacity: car.seats,
+                fuel_type: car.fuel,
+                transmission: car.transmission,
+                rate_per_km: car.ratePerKm,
+                distance: 80, // Default trip distance (can be changed by user later)
+                features: car.features,
+                image: car.image
+            };
+            localStorage.setItem('selectedCar', JSON.stringify(carData));
+            window.location.href = 'booking/car.html';
+        }
+
+        // Helper to get car by name from mockCars
+        function getCarByName(carName) {
+            const cars = [
+                {
+                    name: 'Maruti Swift',
+                    category: 'Hatchback',
+                    image: 'https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Manual',
+                    fuel: 'Petrol',
+                    seats: 5,
+                    pricePerDay: 1200,
+                    ratePerKm: 12,
+                    rating: 4.2,
+                    features: ['AC', 'Music System', 'Power Steering'],
+                    available: true
+                },
+                {
+                    name: 'Honda City',
+                    category: 'Sedan',
+                    image: 'https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Automatic',
+                    fuel: 'Petrol',
+                    seats: 5,
+                    pricePerDay: 1800,
+                    ratePerKm: 15,
+                    rating: 4.5,
+                    features: ['AC', 'Music System', 'Power Steering', 'ABS'],
+                    available: true
+                },
+                {
+                    name: 'Mahindra XUV500',
+                    category: 'SUV',
+                    image: 'https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Manual',
+                    fuel: 'Diesel',
+                    seats: 7,
+                    pricePerDay: 2500,
+                    ratePerKm: 20,
+                    rating: 4.3,
+                    features: ['AC', 'Music System', 'Power Steering', 'ABS', '4WD'],
+                    available: true
+                },
+                {
+                    name: 'BMW 3 Series',
+                    category: 'Luxury',
+                    image: 'https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Automatic',
+                    fuel: 'Petrol',
+                    seats: 5,
+                    pricePerDay: 5000,
+                    ratePerKm: 40,
+                    rating: 4.8,
+                    features: ['AC', 'Premium Sound', 'Leather Seats', 'Sunroof', 'GPS'],
+                    available: false
+                },
+                {
+                    name: 'Hyundai Creta',
+                    category: 'SUV',
+                    image: 'https://images.pexels.com/photos/1719648/pexels-photo-1719648.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Automatic',
+                    fuel: 'Petrol',
+                    seats: 5,
+                    pricePerDay: 2500,
+                    ratePerKm: 20,
+                    rating: 4.4,
+                    features: ['AC', 'Music System', 'Power Steering', 'ABS', 'Airbags'],
+                    available: true
+                },
+                {
+                    name: 'Toyota Innova',
+                    category: 'MPV',
+                    image: 'https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    transmission: 'Manual',
+                    fuel: 'Diesel',
+                    seats: 8,
+                    pricePerDay: 2200,
+                    ratePerKm: 18,
+                    rating: 4.6,
+                    features: ['AC', 'Music System', 'Power Steering', 'ABS', 'Spacious'],
+                    available: true
+                }
+            ];
+            return cars.find(c => c.name === carName);
+        }
+    </script>
+<script>
+    // Setup Date Inputs with Default Values
+    function setupDateInputs() {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        dateInputs.forEach((input, index) => {
+            const date = index === 0 ? today : tomorrow;
+            if (!input.value) {
+                input.value = date.toISOString().split('T')[0];
+            }
+            input.min = today.toISOString().split('T')[0];
+        });
+    }
+    function formatDate(date) {
+        return new Date(date).toLocaleDateString('en-IN', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    function formatTime(time) {
+        return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+</script>
+
+    <div id="ai-assistant-root"></div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/js/ai-assistant.js"></script>
+</body>
+</html>

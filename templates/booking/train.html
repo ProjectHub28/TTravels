@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Booking - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="/index.html" class="text-2xl font-bold text-primary-600">TTravels</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/dashboard" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Trips</a>
+                    {% if logged_in %}
+                        <a href="/logout" class="text-red-600 hover:text-red-700 text-sm font-medium">Logout</a>
+                    {% else %}
+                        <a href="/login" class="text-primary-600 hover:text-primary-700 text-sm font-medium">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Booking Progress -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-center space-x-8">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-medium">1</div>
+                    <span class="ml-2 text-sm font-medium text-gray-900">Train Details</span>
+                </div>
+                <div class="w-16 h-0.5 bg-gray-300"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">2</div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Payment</span>
+                </div>
+                <div class="w-16 h-0.5 bg-gray-300"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">3</div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Train Details -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Train Information -->
+            <div class="lg:col-span-2">
+                <div id="trainDetails" class="bg-white rounded-lg shadow-lg p-6">
+                    <!-- Train details will be loaded here -->
+                    <div class="text-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+                        <p class="mt-4 text-gray-600">Loading train details...</p>
+                    </div>
+                </div>
+
+                <!-- Passenger Information -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Passenger Information</h3>
+                    <div id="passengerForms">
+                        <!-- Passenger forms will be generated here -->
+                    </div>
+                    <button id="addPassenger" class="mt-4 text-primary-600 hover:text-primary-700 font-medium">
+                        + Add Another Passenger
+                    </button>
+                </div>
+
+                <!-- Seat Selection -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Seat Selection</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Berth</label>
+                            <select id="berthPreference" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="LB">Lower Berth</option>
+                                <option value="MB">Middle Berth</option>
+                                <option value="UB">Upper Berth</option>
+                                <option value="SL">Side Lower</option>
+                                <option value="SU">Side Upper</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Meal Preference</label>
+                            <select id="mealPreference" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="veg">Vegetarian</option>
+                                <option value="non-veg">Non-Vegetarian</option>
+                                <option value="jain">Jain</option>
+                                <option value="none">No Meal</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Booking Summary</h3>
+                    <div id="bookingSummary">
+                        <!-- Booking summary will be loaded here -->
+                    </div>
+                    
+                    <div class="mt-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Base Fare</span>
+                            <span id="baseFare" class="text-sm font-medium">₹0</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Reservation Charges</span>
+                            <span id="reservationCharges" class="text-sm font-medium">₹60</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Service Tax</span>
+                            <span id="serviceTax" class="text-sm font-medium">₹0</span>
+                        </div>
+                        <div class="border-t pt-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-semibold text-gray-900">Total</span>
+                                <span id="totalAmount" class="text-lg font-semibold text-primary-600">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="proceedToPayment" class="w-full mt-6 bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
+                        Proceed to Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTrain = null;
+        let bookingData = {};
+        let passengerCount = 1;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTrainDetails();
+            setupEventListeners();
+        });
+
+        function loadTrainDetails() {
+            // Get train data from localStorage (set by trains page)
+            const trainData = JSON.parse(localStorage.getItem('selectedTrain') || '{}');
+            
+            if (trainData && Object.keys(trainData).length > 0) {
+                selectedTrain = trainData;
+                displayTrainDetails();
+                generatePassengerForms();
+                updateBookingSummary();
+            } else {
+                // Redirect back to trains page if no train selected
+                window.location.href = '/trains';
+            }
+        }
+
+        function displayTrainDetails() {
+            const trainDetailsDiv = document.getElementById('trainDetails');
+            
+            trainDetailsDiv.innerHTML = `
+                <div class="border-l-4 border-primary-600 pl-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold text-gray-900">${selectedTrain.train_name}</h2>
+                        <span class="text-sm text-gray-600">${selectedTrain.train_number}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-gray-900">${selectedTrain.source}</div>
+                            <div class="text-sm text-gray-600">${selectedTrain.departure_time}</div>
+                            <div class="text-xs text-gray-500">${selectedTrain.departure_date}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">${selectedTrain.duration}</div>
+                            <div class="w-full h-0.5 bg-gray-300 mt-2"></div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-gray-900">${selectedTrain.destination}</div>
+                            <div class="text-sm text-gray-600">${selectedTrain.arrival_time}</div>
+                            <div class="text-xs text-gray-500">${selectedTrain.arrival_date}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-600">Class:</span>
+                            <span class="font-medium">${selectedTrain.class}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Fare:</span>
+                            <span class="font-medium">₹${selectedTrain.fare}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Availability:</span>
+                            <span class="font-medium text-green-600">${selectedTrain.availability} seats</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Distance:</span>
+                            <span class="font-medium">${selectedTrain.distance} km</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generatePassengerForms() {
+            const passengerFormsDiv = document.getElementById('passengerForms');
+            passengerFormsDiv.innerHTML = '';
+            
+            for (let i = 1; i <= passengerCount; i++) {
+                const passengerForm = document.createElement('div');
+                passengerForm.className = 'border border-gray-200 rounded-lg p-4 mb-4';
+                passengerForm.innerHTML = `
+                    <h4 class="font-medium text-gray-900 mb-3">Passenger ${i}</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                            <input type="text" name="passenger_${i}_name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Age</label>
+                            <input type="number" name="passenger_${i}_age" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" min="1" max="120" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                            <select name="passenger_${i}_gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ID Type</label>
+                            <select name="passenger_${i}_id_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                                <option value="Aadhar">Aadhar Card</option>
+                                <option value="PAN">PAN Card</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Driving License">Driving License</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ID Number</label>
+                            <input type="text" name="passenger_${i}_id_number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                    </div>
+                `;
+                passengerFormsDiv.appendChild(passengerForm);
+            }
+        }
+
+        function updateBookingSummary() {
+            const baseFare = selectedTrain.fare * passengerCount;
+            const reservationCharges = 60;
+            const serviceTax = Math.round(baseFare * 0.05); // 5% service tax
+            const total = baseFare + reservationCharges + serviceTax;
+
+            document.getElementById('baseFare').textContent = `₹${baseFare.toLocaleString()}`;
+            document.getElementById('reservationCharges').textContent = `₹${reservationCharges}`;
+            document.getElementById('serviceTax').textContent = `₹${serviceTax.toLocaleString()}`;
+            document.getElementById('totalAmount').textContent = `₹${total.toLocaleString()}`;
+
+            // Update booking data
+            bookingData = {
+                type: 'train',
+                service: `${selectedTrain.train_name} (${selectedTrain.train_number})`,
+                route: `${selectedTrain.source} → ${selectedTrain.destination}`,
+                date: selectedTrain.departure_date,
+                departure_time: selectedTrain.departure_time,
+                arrival_time: selectedTrain.arrival_time,
+                duration: selectedTrain.duration,
+                class: selectedTrain.class,
+                passengers: passengerCount,
+                base_fare: baseFare,
+                reservation_charges: reservationCharges,
+                service_tax: serviceTax,
+                total: total,
+                train: selectedTrain
+            };
+        }
+
+        function setupEventListeners() {
+            document.getElementById('addPassenger').addEventListener('click', function() {
+                if (passengerCount < 6) { // Maximum 6 passengers
+                    passengerCount++;
+                    generatePassengerForms();
+                    updateBookingSummary();
+                } else {
+                    alert('Maximum 6 passengers allowed per booking.');
+                }
+            });
+
+            document.getElementById('proceedToPayment').addEventListener('click', function() {
+                if (validatePassengerInfo()) {
+                    proceedToPayment();
+                }
+            });
+        }
+
+        function validatePassengerInfo() {
+            for (let i = 1; i <= passengerCount; i++) {
+                const name = document.querySelector(`input[name="passenger_${i}_name"]`).value.trim();
+                const age = document.querySelector(`input[name="passenger_${i}_age"]`).value;
+                const idNumber = document.querySelector(`input[name="passenger_${i}_id_number"]`).value.trim();
+
+                if (!name || !age || !idNumber) {
+                    alert(`Please fill in all details for Passenger ${i}.`);
+                    return false;
+                }
+
+                if (parseInt(age) < 1 || parseInt(age) > 120) {
+                    alert(`Please enter a valid age for Passenger ${i}.`);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function proceedToPayment() {
+            // Collect passenger information
+            const passengers = [];
+            for (let i = 1; i <= passengerCount; i++) {
+                passengers.push({
+                    name: document.querySelector(`input[name="passenger_${i}_name"]`).value.trim(),
+                    age: parseInt(document.querySelector(`input[name="passenger_${i}_age"]`).value),
+                    gender: document.querySelector(`select[name="passenger_${i}_gender"]`).value,
+                    id_type: document.querySelector(`select[name="passenger_${i}_id_type"]`).value,
+                    id_number: document.querySelector(`input[name="passenger_${i}_id_number"]`).value.trim()
+                });
+            }
+
+            // Store passenger and booking data
+            bookingData.passengers = passengers;
+            bookingData.berth_preference = document.getElementById('berthPreference').value;
+            bookingData.meal_preference = document.getElementById('mealPreference').value;
+
+            // Store booking data
+            localStorage.setItem('currentBooking', JSON.stringify(bookingData));
+            
+            // Redirect to payment
+            window.location.href = '/booking/payment.html';
+        }
+    </script>
+</body>
+</html>

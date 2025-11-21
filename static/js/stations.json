@@ -1,0 +1,338 @@
+[
+    {
+      "code": "NDLS",
+      "name": "New Delhi",
+      "city": "Delhi",
+      "state": "Delhi"
+    },
+    {
+      "code": "MMCT",
+      "name": "Mumbai Central",
+      "city": "Mumbai",
+      "state": "Maharashtra"
+    },
+    {
+      "code": "HWH",
+      "name": "Howrah Junction",
+      "city": "Kolkata",
+      "state": "West Bengal"
+    },
+    {
+      "code": "DDN",
+      "name": "Dehradun",
+      "city": "Dehradun",
+      "state": "Uttarakhand"
+    },
+    {
+      "code": "JAT",
+      "name": "Jammu Tawi",
+      "city": "Jammu",
+      "state": "Jammu and Kashmir"
+    },
+    {
+      "code": "AII",
+      "name": "Ajmer Junction",
+      "city": "Ajmer",
+      "state": "Rajasthan"
+    },
+    {
+      "code": "JP",
+      "name": "Jaipur",
+      "city": "Jaipur",
+      "state": "Rajasthan"
+    },
+    {
+      "code": "ERS",
+      "name": "Ernakulam Junction",
+      "city": "Ernakulam",
+      "state": "Kerala"
+    },
+    {
+      "code": "BPL",
+      "name": "Bhopal Junction",
+      "city": "Bhopal",
+      "state": "Madhya Pradesh"
+    },
+    {
+      "code": "DBRG",
+      "name": "Dibrugarh",
+      "city": "Dibrugarh",
+      "state": "Assam"
+    },
+    {
+      "code": "BNC",
+      "name": "Bangalore City",
+      "city": "Bangalore",
+      "state": "Karnataka"
+    },
+    {
+      "code": "FZR",
+      "name": "Firozpur Cantt",
+      "city": "Firozpur",
+      "state": "Punjab"
+    },
+    {
+      "code": "LKO",
+      "name": "Lucknow",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "HW",
+      "name": "Haridwar",
+      "city": "Haridwar",
+      "state": "Uttarakhand"
+    },
+    {
+      "code": "CSMT",
+      "name": "Chhatrapati Shivaji Maharaj Terminus",
+      "city": "Mumbai",
+      "state": "Maharashtra"
+    },
+    {
+      "code": "BBS",
+      "name": "Bhubaneswar",
+      "city": "Bhubaneswar",
+      "state": "Odisha"
+    },
+    {
+      "code": "MAS",
+      "name": "Chennai Central",
+      "city": "Chennai",
+      "state": "Tamil Nadu"
+    },
+    {
+      "code": "HYB",
+      "name": "Hyderabad Deccan",
+      "city": "Hyderabad",
+      "state": "Telangana"
+    },
+    {
+      "code": "SBC",
+      "name": "Bangalore Cantonment",
+      "city": "Bangalore",
+      "state": "Karnataka"
+    },
+    {
+      "code": "PUNE",
+      "name": "Pune Junction",
+      "city": "Pune",
+      "state": "Maharashtra"
+    },
+    {
+      "code": "ADI",
+      "name": "Ahmedabad Junction",
+      "city": "Ahmedabad",
+      "state": "Gujarat"
+    },
+    {
+      "code": "SUR",
+      "name": "Solapur",
+      "city": "Solapur",
+      "state": "Maharashtra"
+    },
+    {
+      "code": "VSKP",
+      "name": "Visakhapatnam",
+      "city": "Visakhapatnam",
+      "state": "Andhra Pradesh"
+    },
+    {
+      "code": "RNC",
+      "name": "Ranchi",
+      "city": "Ranchi",
+      "state": "Jharkhand"
+    },
+    {
+      "code": "GWL",
+      "name": "Gwalior",
+      "city": "Gwalior",
+      "state": "Madhya Pradesh"
+    },
+    {
+      "code": "JBP",
+      "name": "Jabalpur",
+      "city": "Jabalpur",
+      "state": "Madhya Pradesh"
+    },
+    {
+      "code": "INDB",
+      "name": "Indore Junction",
+      "city": "Indore",
+      "state": "Madhya Pradesh"
+    },
+    {
+      "code": "UJN",
+      "name": "Ujjain Junction",
+      "city": "Ujjain",
+      "state": "Madhya Pradesh"
+    },
+    {
+      "code": "KOTA",
+      "name": "Kota Junction",
+      "city": "Kota",
+      "state": "Rajasthan"
+    },
+    {
+      "code": "JU",
+      "name": "Jodhpur Junction",
+      "city": "Jodhpur",
+      "state": "Rajasthan"
+    },
+    {
+      "code": "UDZ",
+      "name": "Udaipur City",
+      "city": "Udaipur",
+      "state": "Rajasthan"
+    },
+    {
+      "code": "BCT",
+      "name": "Mumbai Central Local",
+      "city": "Mumbai",
+      "state": "Maharashtra"
+    },
+    {
+      "code": "LTT",
+      "name": "Lokmanya Tilak Terminus",
+      "city": "Mumbai",
+      "state": "Maharashtra"
+    },
+    {
+      "code": "KYN",
+      "name": "Kalyan Junction",
+      "city": "Kalyan",
+      "state": "Maharashtra"
+    },
+    {
+      "code": "NGP",
+      "name": "Nagpur",
+      "city": "Nagpur",
+      "state": "Maharashtra"
+    },
+    {
+      "code": "RJPB",
+      "name": "Rajendranagar Terminal",
+      "city": "Patna",
+      "state": "Bihar"
+    },
+    {
+      "code": "PNBE",
+      "name": "Patna Junction",
+      "city": "Patna",
+      "state": "Bihar"
+    },
+    {
+      "code": "GKP",
+      "name": "Gorakhpur Junction",
+      "city": "Gorakhpur",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "CNB",
+      "name": "Kanpur Central",
+      "city": "Kanpur",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "ALLP",
+      "name": "Allahabad Junction",
+      "city": "Allahabad",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "BSB",
+      "name": "Varanasi Junction",
+      "city": "Varanasi",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "MGS",
+      "name": "Mughal Sarai Junction",
+      "city": "Mughal Sarai",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "PRYJ",
+      "name": "Prayagraj Junction",
+      "city": "Prayagraj",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "GZB",
+      "name": "Ghaziabad",
+      "city": "Ghaziabad",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "MB",
+      "name": "Moradabad",
+      "city": "Moradabad",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "BE",
+      "name": "Bareilly",
+      "city": "Bareilly",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "LJN",
+      "name": "Lucknow Junction",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "SLN",
+      "name": "Sultanpur Junction",
+      "city": "Sultanpur",
+      "state": "Uttar Pradesh"
+    },
+    {
+      "code": "FBD",
+      "name": "Faridabad",
+      "city": "Faridabad",
+      "state": "Haryana"
+    },
+    {
+      "code": "PNP",
+      "name": "Panipat Junction",
+      "city": "Panipat",
+      "state": "Haryana"
+    },
+    {
+      "code": "KRK",
+      "name": "Karnal",
+      "city": "Karnal",
+      "state": "Haryana"
+    },
+    {
+      "code": "AMB",
+      "name": "Ambala Cantt",
+      "city": "Ambala",
+      "state": "Haryana"
+    },
+    {
+      "code": "CDG",
+      "name": "Chandigarh",
+      "city": "Chandigarh",
+      "state": "Chandigarh"
+    },
+    {
+      "code": "LDH",
+      "name": "Ludhiana Junction",
+      "city": "Ludhiana",
+      "state": "Punjab"
+    },
+    {
+      "code": "JRC",
+      "name": "Jalandhar City",
+      "city": "Jalandhar",
+      "state": "Punjab"
+    },
+    {
+      "code": "ASR",
+      "name": "Amritsar Junction",
+      "city": "Amritsar",
+      "state": "Punjab"
+    }
+  ]

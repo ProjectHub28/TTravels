@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-dark: radial-gradient(ellipse at 50% 30%, #18345c 0%, #0f172a 100%);
+            --bg-gradient-light: radial-gradient(ellipse at 50% 30%, #e0f2fe 0%, #f0f9ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient-dark);
+            transition: background 0.3s ease;
+        }
+        
+        body.light-theme {
+            background: var(--bg-gradient-light);
+        }
+        
+        .glass-card {
+            background: rgba(17, 25, 40, 0.85);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+        }
+        
+        body.light-theme .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        body.light-theme .glass-card h2,
+        body.light-theme .glass-card p,
+        body.light-theme .glass-card label,
+        body.light-theme .glass-card span,
+        body.light-theme .glass-card a {
+            color: #1f2937 !important;
+        }
+        
+        body.light-theme .glass-card input {
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+        }
+        
+        body.light-theme .glass-card input::placeholder,
+        body.light-theme .glass-card input::-webkit-input-placeholder {
+            color: #6b7280 !important;
+        }
+        
+        body.light-theme .glass-card .text-gray-300 {
+            color: #6b7280 !important;
+        }
+        
+        body.light-theme .glass-card a.text-\[#3b82f6\] {
+            color: #3b82f6 !important;
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            filter: blur(2px);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .bubble1 {
+            width: 180px; height: 180px; left: 5vw; top: 10vh; background: #3b82f6;
+            animation-delay: 0s;
+        }
+        
+        .bubble2 {
+            width: 80px; height: 80px; right: 10vw; top: 20vh; background: #fff;
+            animation-delay: 2s;
+        }
+        
+        .bubble3 {
+            width: 120px; height: 120px; left: 15vw; bottom: 10vh; background: #2563eb;
+            animation-delay: 4s;
+        }
+        
+        .bubble4 {
+            width: 60px; height: 60px; right: 15vw; bottom: 15vh; background: #3b82f6;
+            animation-delay: 1.5s;
+        }
+        
+        body.light-theme .bubble {
+            opacity: 0.1;
+        }
+        
+        body.light-theme .bubble1,
+        body.light-theme .bubble3,
+        body.light-theme .bubble4 {
+            background: #3b82f6;
+        }
+        
+        body.light-theme .bubble2 {
+            background: #1e40af;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(17, 25, 40, 0.85);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 50px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+        
+        body.light-theme .theme-toggle {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1f2937;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+        
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg id="sunIcon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="moonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
+
+    <!-- Animated Bubbles -->
+    <div class="bubble bubble1"></div>
+    <div class="bubble bubble2"></div>
+    <div class="bubble bubble3"></div>
+    <div class="bubble bubble4"></div>
+
+    <div class="flex items-center justify-center min-h-screen w-full my-16 px-4">
+      <div class="glass-card max-w-md w-full p-10 space-y-8 relative z-10">
+        <div class="text-center">
+          <a href="/index.html" class="text-4xl font-bold" style="color:#3b82f6"><span class="text-[#3b82f6]">T</span>Travels Admin</a>
+          <h2 class="mt-6 text-3xl font-bold text-white">Admin Portal</h2>
+          <p class="mt-2 text-base text-gray-300">TTravels Management System</p>
+        </div>
+  <form id="adminLoginForm" class="space-y-6" method="POST" action="{{ url_for('admin_index') }}">
+          <div>
+            <input type="email" id="email" name="email" class="mt-1 block w-full px-4 py-3 bg-[#1e293b] border-none rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-white placeholder-gray-400" placeholder="Admin Email" required>
+          </div>
+          <div>
+            <input type="password" id="password" name="password" class="mt-1 block w-full px-4 py-3 bg-[#1e293b] border-none rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-white placeholder-gray-400" placeholder="Password" required>
+          </div>
+          <div class="flex items-center justify-between">
+            <label class="flex items-center text-gray-300">
+              <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-[#3b82f6] focus:ring-[#3b82f6] border-gray-300 rounded">
+              <span class="ml-2 text-sm">Remember me</span>
+            </label>
+            <a href="#" class="text-sm text-[#3b82f6] hover:underline">Forgot password?</a>
+          </div>
+          <button type="submit" class="w-full flex justify-center py-3 px-4 rounded-lg shadow-sm text-base font-semibold text-white bg-[#3b82f6] hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3b82f6] transition-colors">
+            Sign In to Admin Panel
+          </button>
+          {% if error %}
+          <script>
+            alert("{{ error }}");
+          </script>
+          {% endif %}
+        </form>
+        <div class="text-center mt-8">
+          <a href="/index.html" class="text-sm text-[#3b82f6] hover:underline">← Back to TTravels</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript authentication disabled - using Appwrite authentication via Flask -->
+    <script>
+        // Theme Toggle Functionality
+        (function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+            const body = document.body;
+            
+            // Get saved theme or default to dark
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            
+            // Apply saved theme
+            if (savedTheme === 'light') {
+                body.classList.add('light-theme');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                body.classList.remove('light-theme');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+            
+            // Toggle theme on button click
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('light-theme');
+                
+                if (body.classList.contains('light-theme')) {
+                    localStorage.setItem('theme', 'light');
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                } else {
+                    localStorage.setItem('theme', 'dark');
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

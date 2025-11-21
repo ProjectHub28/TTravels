@@ -1,0 +1,14 @@
+appwrite==11.0.0
+python-dotenv
+flask
+google-search-results
+requests
+google-genai
+elevenlabs
+Flask-Mail
+google-generativeai
+sounddevice
+playsound==1.2.2
+numpy
+pydub
+requests

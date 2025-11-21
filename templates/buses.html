@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Booking - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"> <!-- For AI CHATBOT -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-2xl font-['Pacifico'] text-primary">TTravels</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="/index.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="/flights" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Flights</a>
+                        <a href="/hotels.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Hotels</a>
+                        <a href="/trains" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Trains</a>
+                        <a href="/buses" class="text-gray-600 hover:text-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Buses</a>
+                        <a href="/cars" class="text-primary-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Cars</a>
+                        <a href="/explore" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Explore</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6 space-x-3">
+                        <a href="/dashboard" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Trips</a>
+                        {% if logged_in %}
+                            <span class="text-gray-700 px-3 py-2 text-sm">Welcome, {{ username }}</span>
+                            <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Logout</a>
+                        {% else %}
+                            <a href="/login" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Login</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-primary-600 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden absolute top-16 left-0 w-full bg-white border-t shadow-lg z-40">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="/index.html" class="text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="/flights" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Flights</a>
+                <a href="/hotels.html" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Hotels</a>
+                <a href="/trains" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Trains</a>
+                <a href="/buses" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Buses</a>
+                <a href="/cars" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Cars</a>
+                <a href="/explore" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="/dashboard" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">My Trips</a>
+                {% if logged_in %}
+                    <span class="text-gray-700 block px-3 py-2 text-base font-medium">Welcome, {{ username }}</span>
+                    <a href="/logout" class="text-red-600 hover:text-red-700 block px-3 py-2 rounded-md text-base font-medium">Logout</a>
+                {% else %}
+                    <a href="/login" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Bus Search Section -->
+    <section class="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl font-bold mb-8 text-center">Book Bus Tickets</h1>
+            
+            <!-- Search Form -->
+            <div class="bg-white rounded-lg shadow-lg p-6 text-gray-900">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">From</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Departure city">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">To</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Destination city">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Journey Date</label>
+                        <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                    </div>
+                    <div class="flex items-end">
+                        <button id="searchBuses" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
+                            Search Buses
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bus Results Section -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="loadingResults" class="hidden text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                <p class="mt-4 text-gray-600">Searching for buses...</p>
+            </div>
+
+            <div id="busResults" class="hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Available Buses</h2>
+                
+                <!-- Filter Options -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>Departure Time</option>
+                                <option>Duration</option>
+                                <option>Price</option>
+                                <option>Rating</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Bus Type</label>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>All Types</option>
+                                <option>AC Sleeper</option>
+                                <option>Non-AC Sleeper</option>
+                                <option>AC Seater</option>
+                                <option>Non-AC Seater</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Departure Time</label>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>Any Time</option>
+                                <option>Before 6 AM</option>
+                                <option>6 AM to 12 PM</option>
+                                <option>12 PM to 6 PM</option>
+                                <option>After 6 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bus Cards -->
+                <div id="busCards" class="space-y-4">
+                    <!-- Bus cards will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seat Selection Modal -->
+    <div id="seatModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-90vh overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-gray-900">Select Your Seats</h3>
+                    <button id="closeSeatModal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div id="seatLayout" class="mb-6">
+                    <!-- Seat layout will be generated here -->
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex space-x-4 text-sm">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-gray-100 border-2 border-gray-300 rounded mr-2"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-red-500 border-2 border-red-500 rounded mr-2"></div>
+                            <span>Booked</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-primary-600 border-2 border-primary-600 rounded mr-2"></div>
+                            <span>Selected</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p id="selectedSeats" class="text-lg font-semibold text-gray-900 mb-2">No seats selected</p>
+                        <button id="proceedBooking" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors" disabled>
+                            Proceed to Payment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">TTravels</h3>
+                    <p class="text-gray-300 mb-4">Your trusted travel companion for all your journey needs.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="flights.html" class="text-gray-300 hover:text-white transition-colors">Flights</a></li>
+                        <li><a href="hotels.html" class="text-gray-300 hover:text-white transition-colors">Hotels</a></li>
+                        <li><a href="trains.html" class="text-gray-300 hover:text-white transition-colors">Trains</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Customer Service</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">My Bookings</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-300">&copy; 2025 TTravels. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Assistant -->
+    <!-- <div id="ai-assistant" class="fixed bottom-6 right-6 z-40">
+        <button id="ai-toggle" class="bg-primary-600 hover:bg-primary-700 text-white p-4 rounded-full shadow-lg transition-all duration-300 hover:scale-110">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+            </svg>
+        </button>
+        
+        <div id="ai-chat" class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-lg shadow-2xl border border-gray-200">
+            <div class="p-4 bg-primary-600 text-white rounded-t-lg">
+                <h3 class="font-semibold">Bus Assistant</h3>
+                <p class="text-sm text-blue-100">Need help with bus bookings?</p>
+            </div>
+            <div class="p-4 h-64 overflow-y-auto" id="chat-messages">
+                <div class="text-gray-600 text-sm">
+                    Hi! I can help you find buses, compare prices, and book tickets. Where are you traveling?
+                </div>
+            </div>
+            <div class="p-4 border-t">
+                <div class="flex space-x-2">
+                    <input type="text" id="chat-input" placeholder="Ask about buses..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                    <button id="send-message" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <script>
+        // Bus-specific JavaScript
+        let selectedSeats = [];
+        let currentBusPrice = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupBusSearch();
+            setupSeatModal();
+        });
+
+        function setupBusSearch() {
+            const searchButton = document.getElementById('searchBuses');
+            if (searchButton) {
+                searchButton.addEventListener('click', searchBuses);
+            }
+        }
+
+        function searchBuses() {
+            const loadingResults = document.getElementById('loadingResults');
+            const busResults = document.getElementById('busResults');
+            
+            TTravelApp.showLoading(loadingResults);
+            busResults.classList.add('hidden');
+            
+            setTimeout(() => {
+                TTravelApp.hideLoading(loadingResults);
+                busResults.classList.remove('hidden');
+                displayBusResults();
+            }, 2000);
+        }
+
+        function displayBusResults() {
+            const busCards = document.getElementById('busCards');
+            if (!busCards) return;
+            
+            const mockBuses = [
+                {
+                    operator: 'VRL Travels',
+                    busNumber: 'VRL 2501',
+                    busType: 'AC Sleeper',
+                    departureTime: '22:30',
+                    arrivalTime: '05:45',
+                    duration: '7h 15m',
+                    price: 800,
+                    rating: 4.2,
+                    reviews: 256,
+                    amenities: ['WiFi', 'Blanket', 'Water Bottle', 'Charging Point'],
+                    seatsAvailable: 15
+                },
+                {
+                    operator: 'RedBus Premium',
+                    busNumber: 'RB 1205',
+                    busType: 'Volvo AC Sleeper',
+                    departureTime: '23:15',
+                    arrivalTime: '06:30',
+                    duration: '7h 15m',
+                    price: 1200,
+                    rating: 4.5,
+                    reviews: 189,
+                    amenities: ['WiFi', 'Blanket', 'Snacks', 'Charging Point', 'Entertainment'],
+                    seatsAvailable: 8
+                },
+                {
+                    operator: 'SRS Travels',
+                    busNumber: 'SRS 8801',
+                    busType: 'Non-AC Sleeper',
+                    departureTime: '21:45',
+                    arrivalTime: '05:00',
+                    duration: '7h 15m',
+                    price: 600,
+                    rating: 3.8,
+                    reviews: 124,
+                    amenities: ['Blanket', 'Water Bottle'],
+                    seatsAvailable: 22
+                }
+            ];
+            
+            busCards.innerHTML = mockBuses.map(bus => createBusCard(bus)).join('');
+        }
+
+        function createBusCard(bus) {
+            return `
+                <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">${bus.operator}</h3>
+                            <p class="text-sm text-gray-600">${bus.busNumber} • ${bus.busType}</p>
+                            <div class="flex items-center mt-2">
+                                <div class="flex items-center">
+                                    <span class="bg-green-600 text-white px-2 py-1 rounded text-sm font-semibold mr-2">
+                                        ${bus.rating}
+                                    </span>
+                                    <span class="text-sm text-gray-600">(${bus.reviews} reviews)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-gray-900">${TTravelApp.formatCurrency(bus.price)}</p>
+                            <p class="text-sm text-gray-600">per seat</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-center">
+                            <p class="text-lg font-semibold text-gray-900">${bus.departureTime}</p>
+                            <p class="text-sm text-gray-600">Mumbai</p>
+                        </div>
+                        <div class="flex-1 mx-4">
+                            <div class="flex items-center">
+                                <div class="flex-1 border-t border-gray-300"></div>
+                                <div class="px-3 text-center">
+                                    <p class="text-sm text-gray-600">${bus.duration}</p>
+                                </div>
+                                <div class="flex-1 border-t border-gray-300"></div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-semibold text-gray-900">${bus.arrivalTime}</p>
+                            <p class="text-sm text-gray-600">Pune</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex flex-wrap gap-2">
+                            ${bus.amenities.map(amenity => `
+                                <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs">${amenity}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-gray-600">
+                            <span class="${bus.seatsAvailable < 10 ? 'text-red-600' : 'text-green-600'} font-medium">
+                                ${bus.seatsAvailable} seats available
+                            </span>
+                        </div>
+                        <button onclick="selectSeats('${bus.busNumber}', ${bus.price})" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
+                            Select Seats
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectSeats(busNumber, price) {
+            // Find the selected bus from the mockBuses array
+            const bus = getBusByNumber(busNumber);
+            if (!bus) return;
+            currentBusPrice = price;
+            selectedSeats = [];
+            document.getElementById('selectedSeats').innerHTML = 'No seats selected';
+            document.getElementById('proceedBooking').disabled = true;
+            document.getElementById('proceedBooking').classList.add('opacity-50', 'cursor-not-allowed');
+            updateSelectedSeatsDisplay();
+            generateSeatLayout();
+            // Save the selected bus to a global variable for use in booking
+            window._selectedBusForBooking = bus;
+            document.getElementById('seatModal').classList.remove('hidden');
+        }
+
+        function setupSeatModal() {
+            const closeSeatModal = document.getElementById('closeSeatModal');
+            const proceedBooking = document.getElementById('proceedBooking');
+            
+            if (closeSeatModal) {
+                closeSeatModal.addEventListener('click', () => {
+                    document.getElementById('seatModal').classList.add('hidden');
+                });
+            }
+            
+            if (proceedBooking) {
+                proceedBooking.addEventListener('click', () => {
+                    if (selectedSeats.length > 0 && window._selectedBusForBooking) {
+                        // Compose the full bus object as expected by booking/bus.html
+                        const bus = window._selectedBusForBooking;
+                        // For demo, use static source/destination, but in real app, get from search form
+                        const busData = {
+                            operator: bus.operator,
+                            bus_type: bus.busType,
+                            bus_number: bus.busNumber,
+                            source: 'Mumbai',
+                            destination: 'Pune',
+                            departure_time: bus.departureTime,
+                            arrival_time: bus.arrivalTime,
+                            departure_date: '2025-01-18', // Should be from search form
+                            arrival_date: '2025-01-19',   // Should be calculated
+                            duration: bus.duration,
+                            fare: bus.price,
+                            available_seats: bus.seatsAvailable,
+                            distance: 150, // Example static value
+                            amenities: bus.amenities,
+                            rating: bus.rating,
+                            reviews: bus.reviews,
+                            seats: selectedSeats
+                        };
+                        localStorage.setItem('selectedBus', JSON.stringify(busData));
+                        TTravelApp.showToast(`Booking ${selectedSeats.length} seat(s). Redirecting to booking...`, 'success');
+                        setTimeout(() => {
+                            window.location.href = 'booking/bus.html';
+                        }, 1500);
+                    }
+                });
+            }
+        }
+
+        // Helper to get bus by busNumber from mockBuses
+        function getBusByNumber(busNumber) {
+            // This must match the mockBuses array in displayBusResults
+            const buses = [
+                {
+                    operator: 'VRL Travels',
+                    busNumber: 'VRL 2501',
+                    busType: 'AC Sleeper',
+                    departureTime: '22:30',
+                    arrivalTime: '05:45',
+                    duration: '7h 15m',
+                    price: 800,
+                    rating: 4.2,
+                    reviews: 256,
+                    amenities: ['WiFi', 'Blanket', 'Water Bottle', 'Charging Point'],
+                    seatsAvailable: 15
+                },
+                {
+                    operator: 'RedBus Premium',
+                    busNumber: 'RB 1205',
+                    busType: 'Volvo AC Sleeper',
+                    departureTime: '23:15',
+                    arrivalTime: '06:30',
+                    duration: '7h 15m',
+                    price: 1200,
+                    rating: 4.5,
+                    reviews: 189,
+                    amenities: ['WiFi', 'Blanket', 'Snacks', 'Charging Point', 'Entertainment'],
+                    seatsAvailable: 8
+                },
+                {
+                    operator: 'SRS Travels',
+                    busNumber: 'SRS 8801',
+                    busType: 'Non-AC Sleeper',
+                    departureTime: '21:45',
+                    arrivalTime: '05:00',
+                    duration: '7h 15m',
+                    price: 600,
+                    rating: 3.8,
+                    reviews: 124,
+                    amenities: ['Blanket', 'Water Bottle'],
+                    seatsAvailable: 22
+                }
+            ];
+            return buses.find(b => b.busNumber === busNumber);
+        }
+
+        function generateSeatLayout() {
+            const seatLayout = document.getElementById('seatLayout');
+            if (!seatLayout) return;
+            
+            const rows = 10;
+            const seatsPerRow = 4;
+            const bookedSeats = ['A3', 'B2', 'C1', 'D4', 'F2', 'G3', 'H1'];
+            
+            let layoutHTML = `
+                <div class="mb-6 text-center">
+                    <div class="inline-block bg-gray-800 text-white px-6 py-3 rounded-lg mb-4 font-medium">
+                        🚌 Driver
+                    </div>
+                </div>
+                <div class="max-w-sm mx-auto">
+            `;
+            
+            for (let row = 0; row < rows; row++) {
+                const rowLetter = String.fromCharCode(65 + row);
+                
+                layoutHTML += `<div class="flex justify-center items-center mb-2 space-x-2">`;
+                
+                // Left side seats (1-2)
+                for (let seat = 1; seat <= 2; seat++) {
+                    const seatId = `${rowLetter}${seat}`;
+                    const isBooked = bookedSeats.includes(seatId);
+                    const isSelected = selectedSeats.includes(seatId);
+                    
+                    let seatClass = 'w-10 h-10 border-2 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center text-xs font-medium ';
+                    if (isBooked) {
+                        seatClass += 'bg-red-500 text-white border-red-500 cursor-not-allowed';
+                    } else if (isSelected) {
+                        seatClass += 'bg-primary-600 text-white border-primary-600 shadow-lg transform scale-105';
+                    } else {
+                        seatClass += 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-primary-50 hover:border-primary-300';
+                    }
+                    
+                    layoutHTML += `
+                        <div class="${seatClass}" 
+                             onclick="${!isBooked ? `toggleSeat('${seatId}')` : ''}"
+                             ${isBooked ? 'title="Seat already booked"' : 'title="Click to select seat ' + seatId + '"'}>
+                            ${seatId}
+                        </div>
+                    `;
+                }
+                
+                // Aisle space
+                layoutHTML += '<div class="w-8 flex items-center justify-center"><div class="w-px h-6 bg-gray-300"></div></div>';
+                
+                // Right side seats (3-4)
+                for (let seat = 3; seat <= 4; seat++) {
+                    const seatId = `${rowLetter}${seat}`;
+                    const isBooked = bookedSeats.includes(seatId);
+                    const isSelected = selectedSeats.includes(seatId);
+                    
+                    let seatClass = 'w-10 h-10 border-2 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center text-xs font-medium ';
+                    if (isBooked) {
+                        seatClass += 'bg-red-500 text-white border-red-500 cursor-not-allowed';
+                    } else if (isSelected) {
+                        seatClass += 'bg-primary-600 text-white border-primary-600 shadow-lg transform scale-105';
+                    } else {
+                        seatClass += 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-primary-50 hover:border-primary-300';
+                    }
+                    
+                    layoutHTML += `
+                        <div class="${seatClass}" 
+                             onclick="${!isBooked ? `toggleSeat('${seatId}')` : ''}"
+                             ${isBooked ? 'title="Seat already booked"' : 'title="Click to select seat ' + seatId + '"'}>
+                            ${seatId}
+                        </div>
+                    `;
+                }
+                
+                layoutHTML += '</div>';
+            }
+            
+            layoutHTML += '</div>';
+            seatLayout.innerHTML = layoutHTML;
+        }
+
+        function toggleSeat(seatId) {
+            const index = selectedSeats.indexOf(seatId);
+            if (index > -1) {
+                selectedSeats.splice(index, 1);
+            } else {
+                if (selectedSeats.length < 6) { // Limit to 6 seats
+                    selectedSeats.push(seatId);
+                } else {
+                    TTravelApp.showToast('Maximum 6 seats can be selected', 'warning');
+                    return;
+                }
+            }
+            
+            generateSeatLayout();
+            updateSelectedSeatsDisplay();
+        }
+
+        function updateSelectedSeatsDisplay() {
+            const selectedSeatsElement = document.getElementById('selectedSeats');
+            const proceedBooking = document.getElementById('proceedBooking');
+            
+            if (selectedSeats.length === 0) {
+                selectedSeatsElement.textContent = 'No seats selected';
+                selectedSeatsElement.className = 'text-lg font-semibold text-gray-500 mb-2';
+                proceedBooking.disabled = true;
+                proceedBooking.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                const totalPrice = selectedSeats.length * currentBusPrice;
+                selectedSeatsElement.innerHTML = `
+                    <div class="text-primary-600 font-semibold">Seats: ${selectedSeats.join(', ')}</div>
+                    <div class="text-lg font-bold text-gray-900">Total: ${TTravelApp.formatCurrency(totalPrice)}</div>
+                `;
+                selectedSeatsElement.className = 'text-lg mb-2';
+                proceedBooking.disabled = false;
+                proceedBooking.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+    </script>
+    <script>
+        // Setup Date Inputs with Default Values
+        function setupDateInputs() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach((input, index) => {
+                const date = index === 0 ? today : tomorrow;
+                if (!input.value) {
+                    input.value = date.toISOString().split('T')[0];
+                }
+                input.min = today.toISOString().split('T')[0];
+            });
+        }
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('en-IN', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatTime(time) {
+            return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+    </script>
+
+    <div id="ai-assistant-root"></div>
+
+    <script src="static/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="static/js/ai-assistant.js"></script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Booking - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        #ai-assistant-toggle {
+            aspect-ratio: 1/1;
+            border-radius: 50% !important;
+            min-width: 80px;
+            min-height: 80px;
+            max-width: 80px;
+            max-height: 80px;
+            padding: 0;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15), 0 1.5px 4px rgba(0,0,0,0.08);
+            border: 4px solid #fff;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        #ai-assistant-toggle:hover {
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.25), 0 2px 8px rgba(0,0,0,0.12);
+            transform: scale(1.07);
+        }
+        #ai-assistant-toggle i {
+            font-size: 2.5rem;
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation (centered like flight page) -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="/index.html" class="text-2xl font-bold text-primary-600">TTravels</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="/index.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="/flights" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Flights</a>
+                        <a href="/hotels.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Hotels</a>
+                        <a href="/trains" class="text-primary-600 hover:text-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Trains</a>
+                        <a href="/buses" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Buses</a>
+                        <a href="/cars" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Cars</a>
+                        <a href="/explore" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Explore</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6 space-x-3">
+                        <a href="/dashboard" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Trips</a>
+                        {% if logged_in %}
+                            <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Logout</a>
+                        {% else %}
+                            <a href="/login" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Login</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-primary-600 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden absolute top-16 left-0 w-full bg-white border-t shadow-lg z-40">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="/index.html" class="text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="/flights" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Flights</a>
+                <a href="/hotels.html" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Hotels</a>
+                <a href="/trains" class="text-primary-600 hover:text-primary-700 block px-3 py-2 rounded-md text-base font-medium">Trains</a>
+                <a href="/buses" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Buses</a>
+                <a href="/cars" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Cars</a>
+                <a href="/explore" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="/dashboard" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">My Trips</a>
+                {% if logged_in %}
+                    <a href="/logout" class="text-red-600 hover:text-red-700 block px-3 py-2 rounded-md text-base font-medium">Logout</a>
+                {% else %}
+                    <a href="/login" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Train Search Section -->
+    <section class="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12" style="background-image: url('/static/img/train_img2.jpg'); background-size: cover; background-position: center;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl font-bold mb-8 text-center">Book Train Tickets</h1>
+            
+            <!-- Search Form -->
+            <div class="bg-white rounded-lg shadow-lg p-6 text-gray-900">
+                <form id="trainForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">From</label>
+                        <div class="relative">
+                            <input type="text" id="source" name="source" autocomplete="off" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="e.g., NDLS" required>
+                            <ul id="sourceSuggestions" class="absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50 mt-1 hidden max-h-60 overflow-y-auto"></ul>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">To</label>
+                        <div class="relative">
+                            <input type="text" id="destination" name="destination" autocomplete="off" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="e.g., MMCT" required>
+                            <ul id="destinationSuggestions" class="absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50 mt-1 hidden max-h-60 overflow-y-auto"></ul>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Journey Date</label>
+                        <input type="date" name="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" required>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Class</label>
+                        <select name="class" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                            <option value="all">All Classes</option>
+                            <option value="SL">Sleeper (SL)</option>
+                            <option value="3A">AC 3 Tier (3A)</option>
+                            <option value="2A">AC 2 Tier (2A)</option>
+                            <option value="1A">AC 1 Tier (1A)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
+                            Search Trains
+                        </button>
+                    </div>
+                <!-- Station Autocomplete -->
+                <script>
+                    // --- Station Autocomplete (Flight-style) ---
+                    function setupStationAutocomplete(inputId, suggestionsId) {
+                        const input = document.getElementById(inputId);
+                        const suggestions = document.getElementById(suggestionsId);
+                        let activeIndex = -1;
+
+                        input.addEventListener('input', async function () {
+                            const q = input.value.trim();
+                            if (q.length < 2) {
+                                suggestions.innerHTML = '';
+                                suggestions.classList.add('hidden');
+                                return;
+                            }
+                            const res = await fetch(`/api/stations?q=${encodeURIComponent(q)}&limit=8`);
+                            const data = await res.json();
+                            suggestions.innerHTML = '';
+                            if (data.success && data.data.length > 0) {
+                                data.data.forEach((station, idx) => {
+                                    const li = document.createElement('li');
+                                    li.className = 'px-4 py-2 hover:bg-primary-100 cursor-pointer select-none';
+                                    li.style.userSelect = 'none';
+                                    li.innerHTML = `<div><span class="font-medium">${station.city} (${station.code})</span> <span class="text-xs text-gray-500">${station.name}</span></div>`;
+                                    li.addEventListener('mousedown', function (e) {
+                                        e.preventDefault();
+                                        input.value = station.code;
+                                        suggestions.classList.add('hidden');
+                                    });
+                                    suggestions.appendChild(li);
+                                });
+                                suggestions.classList.remove('hidden');
+                            } else {
+                                suggestions.classList.add('hidden');
+                            }
+                        });
+
+                        input.addEventListener('focus', function () {
+                            if (input.value.length >= 2 && suggestions.innerHTML) {
+                                suggestions.classList.remove('hidden');
+                            }
+                        });
+                        document.addEventListener('click', function (event) {
+                            if (!input.contains(event.target) && !suggestions.contains(event.target)) {
+                                suggestions.classList.add('hidden');
+                            }
+                        });
+                    }
+                    document.addEventListener('DOMContentLoaded', function () {
+                        setupStationAutocomplete('source', 'sourceSuggestions');
+                        setupStationAutocomplete('destination', 'destinationSuggestions');
+                    });
+                </script>
+            </div>
+        </div>
+    </section>
+
+    <!-- Train Results Section -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="loadingResults" class="hidden text-center py-12">
+                <div class="flex flex-col items-center justify-center">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-400 mb-4"></div>
+                    <p class="text-gray-400 text-lg">Searching for trains...</p>
+                </div>
+            </div>
+            <div id="results"></div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+            const form = document.getElementById('trainForm');
+            if (form) {
+                form.addEventListener('submit', handleFormSubmit);
+                console.log('Form event listener added');
+            } else {
+                console.error('Form not found');
+            }
+            
+            // Set default date to today
+            const dateInput = document.querySelector('input[name="date"]');
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+        });
+
+        // Test function for quick testing
+        function testSearch() {
+            document.getElementById('source').value = 'NDLS';
+            document.getElementById('destination').value = 'MMCT';
+            handleFormSubmit(new Event('submit'));
+        }
+        
+        // Debug function to check train data
+        async function debugTrains() {
+            try {
+                const response = await fetch('/debug/trains');
+                const data = await response.json();
+                console.log('Debug data:', data);
+                alert(`Total trains: ${data.total_trains}\nFile exists: ${data.file_exists}\nPath: ${data.json_path}`);
+            } catch (error) {
+                console.error('Debug error:', error);
+                alert('Debug failed: ' + error.message);
+            }
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            console.log('Form submitted');
+            
+            const source = document.getElementById('source').value.trim().toUpperCase();
+            const destination = document.getElementById('destination').value.trim().toUpperCase();
+            
+            console.log('Search params:', { source, destination });
+            
+            if (!source || !destination) {
+                alert('Please enter both source and destination');
+                return;
+            }
+            
+            // Show loading state (modern spinner)
+            const loadingDiv = document.getElementById('loadingResults');
+            const resultsDiv = document.getElementById('results');
+            loadingDiv.classList.remove('hidden');
+            resultsDiv.innerHTML = '';
+            
+            try {
+                console.log('Making request to /search_trains');
+                const response = await fetch('/search_trains', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ source, destination })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    console.error('Server error:', error);
+                    throw new Error(error.error || 'Failed to fetch trains');
+                }
+
+                const trains = await response.json();
+                console.log('Received trains:', trains);
+                displayTrainResults(trains);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.innerHTML = `
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">Error</h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <p>${error.message || 'An error occurred while searching for trains. Please try again.'}</p>
+                                    <p class="mt-2 text-xs">Check the browser console for more details.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } finally {
+                loadingDiv.classList.add('hidden');
+            }
+        }
+
+        function displayTrainResults(trains) {
+            console.log('Displaying results for:', trains);
+            // Store the last trains array globally for bookTrain to access
+            window.lastTrains = trains;
+            const resultsDiv = document.getElementById('results');
+            
+            if (!trains || trains.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">No trains found</h3>
+                        <p class="mt-1 text-sm text-gray-500">Try adjusting your search to find what you're looking for.</p>
+                        <p class="mt-2 text-xs text-gray-400">Available routes: NDLS→MMCT, NDLS→DDN</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsDiv.innerHTML = `
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">Available Trains (${trains.length})</h2>
+                </div>
+                ${trains.map(train => `
+                    <div class="bg-white shadow-lg rounded-lg mb-6 overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900">
+                                        ${train.train_name} (${train.train_number})
+                                    </h3>
+                                    <p class="text-sm text-gray-600">
+                                        ${train.source} → ${train.destination} • Duration: ${train.duration}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="text-center">
+                                            <p class="text-lg font-bold text-gray-900">${train.departure_time}</p>
+                                            <p class="text-xs text-gray-500">${train.source}</p>
+                                        </div>
+                                        <div class="flex-1 px-4">
+                                            <div class="border-t border-gray-300 relative">
+                                                <div class="absolute inset-0 flex justify-center">
+                                                    <span class="bg-gray-50 px-2 text-xs text-gray-500">${train.duration}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-lg font-bold text-gray-900">${train.arrival_time}</p>
+                                            <p class="text-xs text-gray-500">${train.destination}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="px-6 py-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                ${Object.entries(train.classes).map(([cls, price]) => `
+                                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                        <div class="text-center">
+                                            <h4 class="font-semibold text-gray-900 mb-1">${cls}</h4>
+                                            <p class="text-xs text-gray-500 mb-2">${getClassFullName(cls)}</p>
+                                            <p class="text-2xl font-bold text-primary-600 mb-2">₹${price}</p>
+                                            <p class="text-xs text-gray-600 mb-3">
+                                                ${train.seats_available[cls]} seats available
+                                            </p>
+                                            <button onclick="bookTrain('${train.train_number}', '${cls}', '${price}')" 
+                                                    class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors ${train.seats_available[cls] === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
+                                                    ${train.seats_available[cls] === 0 ? 'disabled' : ''}>
+                                                ${train.seats_available[cls] === 0 ? 'Sold Out' : 'Book Now'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function getClassFullName(cls) {
+            const classMap = {
+                'SL': 'Sleeper Class',
+                '3A': 'AC 3-Tier',
+                '2A': 'AC 2-Tier', 
+                '1A': 'AC First Class',
+                'CC': 'Chair Car',
+                'EC': 'Executive Class'
+            };
+            return classMap[cls] || cls;
+        }
+
+        function bookTrain(trainNumber, className, price) {
+            console.log(`Booking train ${trainNumber}, class ${className}, price ${price}`);
+            // Show booking confirmation
+            const confirmation = confirm(`Book ${trainNumber} in ${className} class for ₹${price}?`);
+            if (confirmation) {
+                // Find the selected train object from the last search results
+                let trainData = null;
+                if (window.lastTrains && Array.isArray(window.lastTrains)) {
+                    trainData = window.lastTrains.find(t => t.train_number == trainNumber);
+                }
+                if (!trainData) {
+                    trainData = { train_number: trainNumber, class: className, fare: price };
+                }
+                // Prepare the selected train data for booking page
+                const selectedTrain = {
+                    ...trainData,
+                    class: className,
+                    fare: Number(price),
+                    availability: trainData.seats_available ? trainData.seats_available[className] : undefined
+                };
+                // Save to localStorage for booking page
+                localStorage.setItem('selectedTrain', JSON.stringify(selectedTrain));
+                // Redirect to booking page
+                window.location.href = 'booking/train.html';
+            }
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">TTravels</h3>
+                    <p class="text-gray-300 mb-4">Your trusted travel companion for all your journey needs.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="flights.html" class="text-gray-300 hover:text-white transition-colors">Flights</a></li>
+                        <li><a href="hotels.html" class="text-gray-300 hover:text-white transition-colors">Hotels</a></li>
+                        <li><a href="buses.html" class="text-gray-300 hover:text-white transition-colors">Buses</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Customer Service</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">My Bookings</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-300">&copy; 2025 TTravels. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="ai-assistant-root"></div>
+
+    <script src="static/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="static/js/ai-assistant.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="/index.html" class="text-2xl font-['Pacifico'] text-primary">TTravels</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="/index.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="/flights" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Flights</a>
+                        <a href="/hotels.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Hotels</a>
+                        <a href="/trains" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Trains</a>
+                        <a href="/buses" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Buses</a>
+                        <a href="/cars" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Cars</a>
+                        <a href="/explore" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Explore</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6 space-x-3">
+                        <a href="/dashboard" class="text-primary-600 hover:text-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Trips</a>
+                        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Logout</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-primary-600 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden absolute top-16 left-0 w-full bg-white border-t shadow-lg z-40">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="/index.html" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="/flights" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Flights</a>
+                <a href="/hotels.html" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Hotels</a>
+                <a href="/trains" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Trains</a>
+                <a href="/buses" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Buses</a>
+                <a href="/cars" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Cars</a>
+                <a href="/explore" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Explore</a>
+                <a href="/dashboard" class="text-primary-600 block px-3 py-2 rounded-md text-base font-medium">My Trips</a>
+                <a href="/login" class="text-gray-700 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold mb-2">Welcome back, {{ username }}!</h1>
+                    <p class="text-blue-100">Manage your bookings and plan your next adventure</p>
+                    {% if user_email %}
+                    <p class="text-blue-200 text-sm mt-1">{{ user_email }}</p>
+                    {% endif %}
+                </div>
+                <div class="hidden md:block">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <p class="text-sm text-blue-100">Traveler Level</p>
+                        <p class="text-xl font-semibold">Explorer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="py-8 -mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900">5</h3>
+                    <p class="text-gray-600">Total Trips</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900">3</h3>
+                    <p class="text-gray-600">Completed</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900">1</h3>
+                    <p class="text-gray-600">Upcoming</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900">1</h3>
+                    <p class="text-gray-600">Cancelled</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Dashboard Content -->
+    <section class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar -->
+                <div class="lg:w-1/4">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <nav class="space-y-2">
+                            <button class="w-full text-left px-4 py-3 bg-primary-50 text-primary-600 rounded-lg font-medium booking-tab active" data-tab="all">
+                                All Bookings
+                            </button>
+                            <button class="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium booking-tab" data-tab="saved-plans">
+                                My Saved Trip Plans
+                            </button>
+                            <button class="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium booking-tab" data-tab="flights">
+                                Flights
+                            </button>
+                            <button class="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium booking-tab" data-tab="hotels">
+                                Hotels
+                            </button>
+                            <button class="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium booking-tab" data-tab="trains">
+                                Trains
+                            </button>
+                            <button class="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium booking-tab" data-tab="buses">
+                                Buses
+                            </button>
+                            <button class="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg font-medium booking-tab" data-tab="cars">
+                                Cars
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Bookings Content -->
+                <div class="lg:w-3/4">
+                    <div class="bg-white rounded-lg shadow-lg">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-xl font-semibold text-gray-900">My Bookings</h2>
+                                <div class="flex space-x-3">
+                                    <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                        <option>All Status</option>
+                                        <option>Confirmed</option>
+                                        <option>Pending</option>
+                                        <option>Cancelled</option>
+                                    </select>
+                                    <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                        <option>Last 6 months</option>
+                                        <option>Last month</option>
+                                        <option>Last week</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="bookingsContainer" class="p-6">
+                            <!-- Booking cards will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">TTravels</h3>
+                    <p class="text-gray-300 mb-4">Your trusted travel companion for all your journey needs.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="flights.html" class="text-gray-300 hover:text-white transition-colors">Flights</a></li>
+                        <li><a href="hotels.html" class="text-gray-300 hover:text-white transition-colors">Hotels</a></li>
+                        <li><a href="trains.html" class="text-gray-300 hover:text-white transition-colors">Trains</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Customer Service</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-300">&copy; 2025 TTravels. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- View Details Modal -->
+    <div id="tripPlanModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
+                <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Trip Details</h3>
+                <button id="modal-close-btn" class="text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
+            </div>
+            <div id="modal-body" class="p-6">
+                <div id="modal-loading" class="text-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                    <p class="mt-4 text-gray-600">Loading trip details...</p>
+                </div>
+                <div id="modal-content" class="hidden">
+                    <div id="modal-itinerary" class="mb-6">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-3">Itinerary</h4>
+                        <div class="text-gray-700 whitespace-pre-line"></div>
+                    </div>
+                    <div id="modal-hotels" class="mb-6">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-3">Hotels</h4>
+                        <div class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+                <button id="modal-close-footer-btn" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Close</button>
+                <a id="modal-edit-btn" href="#" class="btn-primary px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors">Edit Plan</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="ai-assistant-root"></div>
+
+    <script src="static/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="static/js/ai-assistant.js"></script>
+    <script src="static/js/dashboard.js"></script>
+</body>
+</html>

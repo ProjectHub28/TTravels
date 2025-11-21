@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script> -->
+    <style>
+        :root {
+            --bg-gradient-dark: radial-gradient(ellipse at 50% 30%, #18345c 0%, #0f172a 100%);
+            --bg-gradient-light: radial-gradient(ellipse at 50% 30%, #e0f2fe 0%, #f0f9ff 100%);
+        }
+        
+        body {
+            background: var(--bg-gradient-dark);
+            transition: background 0.3s ease;
+        }
+        
+        body.light-theme {
+            background: var(--bg-gradient-light);
+        }
+        
+        .glass-card {
+            background: rgba(17, 25, 40, 0.85);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+        }
+        
+        body.light-theme .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        body.light-theme .glass-card h2,
+        body.light-theme .glass-card p,
+        body.light-theme .glass-card label,
+        body.light-theme .glass-card span {
+            color: #1f2937 !important;
+        }
+        
+        body.light-theme .glass-card input,
+        body.light-theme .glass-card select {
+            background: #f3f4f6 !important;
+            color: #1f2937 !important;
+        }
+        
+        body.light-theme .glass-card input::placeholder,
+        body.light-theme .glass-card input::-webkit-input-placeholder {
+            color: #6b7280 !important;
+        }
+        
+        body.light-theme .glass-card .border-gray-600 {
+            border-color: #d1d5db !important;
+        }
+        
+        body.light-theme .glass-card .text-gray-400 {
+            color: #6b7280 !important;
+        }
+        
+        body.light-theme .glass-card button[type="button"] {
+            background: rgba(59, 130, 246, 0.1) !important;
+            border-color: rgba(59, 130, 246, 0.3) !important;
+            color: #3b82f6 !important;
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            filter: blur(2px);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .bubble1 {
+            width: 180px; height: 180px; left: 5vw; top: 10vh; background: #3b82f6;
+            animation-delay: 0s;
+        }
+        
+        .bubble2 {
+            width: 80px; height: 80px; right: 10vw; top: 20vh; background: #fff;
+            animation-delay: 2s;
+        }
+        
+        .bubble3 {
+            width: 120px; height: 120px; left: 15vw; bottom: 10vh; background: #2563eb;
+            animation-delay: 4s;
+        }
+        
+        .bubble4 {
+            width: 60px; height: 60px; right: 15vw; bottom: 15vh; background: #3b82f6;
+            animation-delay: 1.5s;
+        }
+        
+        body.light-theme .bubble {
+            opacity: 0.1;
+        }
+        
+        body.light-theme .bubble1,
+        body.light-theme .bubble3,
+        body.light-theme .bubble4 {
+            background: #3b82f6;
+        }
+        
+        body.light-theme .bubble2 {
+            background: #1e40af;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(17, 25, 40, 0.85);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 50px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+        
+        body.light-theme .theme-toggle {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1f2937;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+        
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<!-- <body class="font-inter bg-gray-50 min-h-screen flex items-center justify-center"> -->
+<body>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg id="sunIcon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="moonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
+
+    <!-- Animated Bubbles -->
+    <div class="bubble bubble1"></div>
+    <div class="bubble bubble2"></div>
+    <div class="bubble bubble3"></div>
+    <div class="bubble bubble4"></div>
+
+    <!-- receintcomment<div class="max-w-md w-full space-y-8 p-8">
+        <div class="text-center">
+            <a href="index.html" class="text-3xl font-bold text-primary-600">TTravels</a>
+            <h2 class="mt-6 text-3xl font-bold text-gray-900">Welcome back</h2>
+            <p class="mt-2 text-sm text-gray-600">Sign in to your account</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-8"> -->
+            <!-- Login Form -->
+     <!-- receint comment       <form id="loginForm" class="space-y-6" method="POST" action="/login">
+                <div> -->
+          <!-- recentcommnet          <label for="loginMethod" class="block text-sm font-medium text-gray-700 mb-2">Login with</label> -->
+                    <!-- <div class="flex space-x-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="loginMethod" value="email" class="mr-2" checked>
+                            <span class="text-sm">Email</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="loginMethod" value="mobile" class="mr-2">
+                            <span class="text-sm">Mobile</span>
+                        </label>
+                    </div> -->
+            <!-- recentcomment    </div> -->
+
+                <!-- receintcomment<div id="emailField">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                    <input type="email" id="email" name="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" placeholder="Enter your email">
+                </div> -->
+
+                <!-- <div id="mobileField" class="hidden">
+                    <label for="mobile" class="block text-sm font-medium text-gray-700">Mobile number</label>
+                    <div class="mt-1 flex">
+                        <select class="px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                            <option>+91</option>
+                            <option>+1</option>
+                            <option>+44</option>
+                        </select>
+                        <input type="tel" id="mobile" name="mobile" maxlength="10" class="flex-1 px-3 py-2 border-t border-r border-b border-gray-300 rounded-r-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500" placeholder="Enter mobile number">
+                    </div>
+                </div> -->
+                <!-- ----------------------comment -->
+                <!-- <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" placeholder="Enter your password">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                        <label for="remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                    </div>
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-primary-600 hover:text-primary-500">Forgot your password?</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                    Sign in
+                </button>
+            </form> -->
+            <!-- ------------------------------------recent commendtent -->
+
+            <!-- OTP Form (Initially Hidden) -->
+            <!-- <form id="otpForm" class="space-y-6 hidden">
+                <div class="text-center">
+                    <h3 class="text-lg font-medium text-gray-900">Verify OTP</h3>
+                    <p class="text-sm text-gray-600 mt-1">We've sent a verification code to your mobile number</p>
+                </div>
+
+                <div>
+                    <label for="otp" class="block text-sm font-medium text-gray-700">Enter OTP</label>
+                    <input type="text" id="otp" name="otp" maxlength="6" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-center text-lg tracking-widest" placeholder="000000">
+                </div>
+
+                <div class="text-center">
+                    <button type="button" id="resendOtp" class="text-sm text-primary-600 hover:text-primary-500">Didn't receive code? Resend</button>
+                </div>
+
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                    Verify & Sign in
+                </button>
+
+                <button type="button" id="backToLogin" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                    Back to Login
+                </button>
+            </form> -->
+
+            <!-- recent comment -->
+            <!-- Divider -->
+            <!-- <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span class="ml-2">Google</span>
+                    </button>
+
+                    <button class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                        <span class="ml-2">Facebook</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <p class="text-sm text-gray-600">
+                Don't have an account?
+                <a href="/signup" class="font-medium text-primary-600 hover:text-primary-500">Sign up</a>
+            </p>
+        </div>
+    </div> -->
+
+
+
+    <div class="flex items-center justify-center min-h-screen w-full my-16 px-4">
+      <div class="glass-card max-w-md w-full p-10 space-y-8 relative z-10">
+        <div class="text-center">
+          <a href="/index.html" class="text-4xl font-bold" style="color:#3b82f6"><span class="text-[#3b82f6]">T</span>Travels</a>
+          <h2 class="mt-6 text-3xl font-bold text-white">Welcome back</h2>
+          <p class="mt-2 text-base text-gray-300">Sign in to your account</p>
+        </div>
+        <form id="loginForm" class="space-y-6" method="POST" action="/login">
+          <div>
+            <input type="email" id="email" name="email" class="mt-1 block w-full px-4 py-3 bg-[#1e293b] border-none rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-white placeholder-gray-400" placeholder="Email address" required>
+          </div>
+          <div>
+            <input type="password" id="password" name="password" class="mt-1 block w-full px-4 py-3 bg-[#1e293b] border-none rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-white placeholder-gray-400" placeholder="Password" required>
+          </div>
+          <div class="flex items-center justify-between">
+            <label class="flex items-center text-gray-300">
+              <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-[#3b82f6] focus:ring-[#3b82f6] border-gray-300 rounded">
+              <span class="ml-2 text-sm">Remember me</span>
+            </label>
+            <a href="#" class="text-sm text-[#3b82f6] hover:underline">Forgot your password?</a>
+          </div>
+          <button type="submit" class="w-full flex justify-center py-3 px-4 rounded-lg shadow-sm text-base font-semibold text-white bg-[#3b82f6] hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3b82f6] transition-colors">
+            Sign in
+          </button>
+        </form>
+        <div class="flex items-center my-6">
+          <div class="flex-grow border-t border-gray-600"></div>
+          <span class="mx-4 text-gray-400">or continue with</span>
+          <div class="flex-grow border-t border-gray-600"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <button class="flex items-center justify-center py-2 px-4 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium border border-white/20">
+            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button class="flex items-center justify-center py-2 px-4 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium border border-white/20">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+        </div>
+        <div class="text-center mt-8">
+          <p class="text-sm text-gray-400">Don't have an account? <a href="/signup" class="text-[#3b82f6] hover:underline">Sign up</a></p>
+        </div>
+      </div>
+    </div>
+
+
+
+    <script src="static/js/app.js"></script>
+    <script>
+        // Theme Toggle Functionality
+        (function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+            const body = document.body;
+            
+            // Get saved theme or default to dark
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            
+            // Apply saved theme
+            if (savedTheme === 'light') {
+                body.classList.add('light-theme');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                body.classList.remove('light-theme');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+            
+            // Toggle theme on button click
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('light-theme');
+                
+                if (body.classList.contains('light-theme')) {
+                    localStorage.setItem('theme', 'light');
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                } else {
+                    localStorage.setItem('theme', 'dark');
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
+{% if error %}
+<script>
+    alert("{{ error }}");
+</script>
+{% endif %}

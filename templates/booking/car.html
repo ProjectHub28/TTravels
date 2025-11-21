@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Booking - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="/index.html" class="text-2xl font-bold text-primary-600">TTravels</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/dashboard" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Trips</a>
+                    {% if logged_in %}
+                        <span class="text-sm text-gray-600">Welcome, {{ username }}</span>
+                        <a href="/logout" class="text-red-600 hover:text-red-700 text-sm font-medium">Logout</a>
+                    {% else %}
+                        <a href="/login" class="text-primary-600 hover:text-primary-700 text-sm font-medium">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Booking Progress -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-center space-x-8">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-medium">1</div>
+                    <span class="ml-2 text-sm font-medium text-gray-900">Car Details</span>
+                </div>
+                <div class="w-16 h-0.5 bg-gray-300"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">2</div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Payment</span>
+                </div>
+                <div class="w-16 h-0.5 bg-gray-300"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">3</div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Car Details -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Car Information -->
+            <div class="lg:col-span-2">
+                <div id="carDetails" class="bg-white rounded-lg shadow-lg p-6">
+                    <!-- Car details will be loaded here -->
+                    <div class="text-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+                        <p class="mt-4 text-gray-600">Loading car details...</p>
+                    </div>
+                </div>
+
+                <!-- Driver Information -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Driver Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Driver Name</label>
+                            <input type="text" id="driverName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Driver Phone</label>
+                            <input type="tel" id="driverPhone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">License Number</label>
+                            <input type="text" id="licenseNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Experience</label>
+                            <select id="driverExperience" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                                <option value="1-2">1-2 years</option>
+                                <option value="3-5">3-5 years</option>
+                                <option value="5+">5+ years</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trip Details -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Trip Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pickup Location</label>
+                            <input type="text" id="pickupLocation" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Drop Location</label>
+                            <input type="text" id="dropLocation" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pickup Date</label>
+                            <input type="date" id="pickupDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pickup Time</label>
+                            <input type="time" id="pickupTime" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Services -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Services</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="acService" class="mr-3">
+                            <span class="text-sm text-gray-700">AC Service (+₹200)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="waitingTime" class="mr-3">
+                            <span class="text-sm text-gray-700">Extended Waiting Time (+₹100/hour)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="tollCharges" class="mr-3">
+                            <span class="text-sm text-gray-700">Toll Charges Included (+₹300)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Booking Summary</h3>
+                    <div id="bookingSummary">
+                        <!-- Booking summary will be loaded here -->
+                    </div>
+                    
+                    <div class="mt-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Base Fare</span>
+                            <span id="baseFare" class="text-sm font-medium">₹0</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Additional Services</span>
+                            <span id="additionalServices" class="text-sm font-medium">₹0</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Service Tax</span>
+                            <span id="serviceTax" class="text-sm font-medium">₹0</span>
+                        </div>
+                        <div class="border-t pt-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-semibold text-gray-900">Total</span>
+                                <span id="totalAmount" class="text-lg font-semibold text-primary-600">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="proceedToPayment" class="w-full mt-6 bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
+                        Proceed to Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCar = null;
+        let bookingData = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCarDetails();
+            setupEventListeners();
+        });
+
+        function loadCarDetails() {
+            // Get car data from localStorage (set by cars page)
+            const carData = JSON.parse(localStorage.getItem('selectedCar') || '{}');
+            
+            if (carData && Object.keys(carData).length > 0) {
+                selectedCar = carData;
+                displayCarDetails();
+                updateBookingSummary();
+            } else {
+                // Redirect back to cars page if no car selected
+                window.location.href = '/cars';
+            }
+        }
+
+        function displayCarDetails() {
+            const carDetailsDiv = document.getElementById('carDetails');
+            carDetailsDiv.innerHTML = `
+                <div class="border-l-4 border-primary-600 pl-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold text-gray-900">${selectedCar.make} ${selectedCar.model}</h2>
+                        <span class="text-sm text-gray-600">${selectedCar.type}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <span class="text-gray-600">Seating Capacity:</span>
+                            <span class="font-medium">${selectedCar.capacity} passengers</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Fuel Type:</span>
+                            <span class="font-medium">${selectedCar.fuel_type}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Transmission:</span>
+                            <span class="font-medium">${selectedCar.transmission}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600">Rate per km:</span>
+                            <span class="font-medium">₹${selectedCar.rate_per_km}</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-green-50 rounded-lg">
+                        <h4 class="font-medium text-green-900 mb-2">Features</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${selectedCar.features.map(feature => 
+                                `<span class=\"px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full\">${feature}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateBookingSummary() {
+            // Use rate_per_km from selectedCar and a realistic distance
+            const baseFare = selectedCar.rate_per_km * selectedCar.distance;
+            let additionalServices = 0;
+            if (document.getElementById('acService').checked) {
+                additionalServices += 200;
+            }
+            if (document.getElementById('waitingTime').checked) {
+                additionalServices += 100;
+            }
+            if (document.getElementById('tollCharges').checked) {
+                additionalServices += 300;
+            }
+            const serviceTax = Math.round((baseFare + additionalServices) * 0.05); // 5% service tax
+            const total = baseFare + additionalServices + serviceTax;
+            document.getElementById('baseFare').textContent = `₹${baseFare.toLocaleString()}`;
+            document.getElementById('additionalServices').textContent = `₹${additionalServices.toLocaleString()}`;
+            document.getElementById('serviceTax').textContent = `₹${serviceTax.toLocaleString()}`;
+            document.getElementById('totalAmount').textContent = `₹${total.toLocaleString()}`;
+            bookingData = {
+                type: 'car',
+                service: `${selectedCar.make} ${selectedCar.model} - ${selectedCar.type}`,
+                car_type: selectedCar.type,
+                capacity: selectedCar.capacity,
+                distance: selectedCar.distance,
+                rate_per_km: selectedCar.rate_per_km,
+                base_fare: baseFare,
+                additional_services: additionalServices,
+                service_tax: serviceTax,
+                total: total,
+                car: selectedCar
+            };
+        }
+
+        function setupEventListeners() {
+            // Add event listeners for additional services checkboxes
+            document.getElementById('acService').addEventListener('change', updateBookingSummary);
+            document.getElementById('waitingTime').addEventListener('change', updateBookingSummary);
+            document.getElementById('tollCharges').addEventListener('change', updateBookingSummary);
+
+            document.getElementById('proceedToPayment').addEventListener('click', function() {
+                if (validateBookingInfo()) {
+                    proceedToPayment();
+                }
+            });
+        }
+
+        function validateBookingInfo() {
+            const driverName = document.getElementById('driverName').value.trim();
+            const driverPhone = document.getElementById('driverPhone').value.trim();
+            const licenseNumber = document.getElementById('licenseNumber').value.trim();
+            const pickupLocation = document.getElementById('pickupLocation').value.trim();
+            const dropLocation = document.getElementById('dropLocation').value.trim();
+            const pickupDate = document.getElementById('pickupDate').value;
+            const pickupTime = document.getElementById('pickupTime').value;
+
+            if (!driverName || !driverPhone || !licenseNumber || !pickupLocation || !dropLocation || !pickupDate || !pickupTime) {
+                alert('Please fill in all required fields.');
+                return false;
+            }
+
+            if (!isValidPhone(driverPhone)) {
+                alert('Please enter a valid phone number.');
+                return false;
+            }
+
+            return true;
+        }
+
+        function proceedToPayment() {
+            // Collect booking information
+            bookingData.driver = {
+                name: document.getElementById('driverName').value.trim(),
+                phone: document.getElementById('driverPhone').value.trim(),
+                license: document.getElementById('licenseNumber').value.trim(),
+                experience: document.getElementById('driverExperience').value
+            };
+
+            bookingData.trip = {
+                pickup_location: document.getElementById('pickupLocation').value.trim(),
+                drop_location: document.getElementById('dropLocation').value.trim(),
+                pickup_date: document.getElementById('pickupDate').value,
+                pickup_time: document.getElementById('pickupTime').value
+            };
+
+            bookingData.additional_services = {
+                ac_service: document.getElementById('acService').checked,
+                waiting_time: document.getElementById('waitingTime').checked,
+                toll_charges: document.getElementById('tollCharges').checked
+            };
+
+            // Store booking data
+            localStorage.setItem('currentBooking', JSON.stringify(bookingData));
+            
+            // Redirect to payment
+            window.location.href = '/booking/payment.html';
+        }
+
+        function isValidPhone(phone) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+            return phoneRegex.test(phone);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="/index.html" class="text-2xl font-bold text-primary-600">TTravels</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/dashboard" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Trips</a>
+                    {% if logged_in %}
+                        <span class="text-sm text-gray-600">Welcome, {{ username }}</span>
+                        <a href="/logout" class="text-red-600 hover:text-red-700 text-sm font-medium">Logout</a>
+                    {% else %}
+                        <a href="/login" class="text-primary-600 hover:text-primary-700 text-sm font-medium">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Booking Progress -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-center space-x-8">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-medium">1</div>
+                    <span class="ml-2 text-sm font-medium text-gray-900">Hotel Details</span>
+                </div>
+                <div class="w-16 h-0.5 bg-gray-300"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">2</div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Payment</span>
+                </div>
+                <div class="w-16 h-0.5 bg-gray-300"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-medium">3</div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotel Details -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Hotel Information -->
+            <div class="lg:col-span-2">
+                <div id="hotelDetails" class="bg-white rounded-lg shadow-lg p-6">
+                    <!-- Hotel details will be loaded here -->
+                    <div class="text-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+                        <p class="mt-4 text-gray-600">Loading hotel details...</p>
+                    </div>
+                </div>
+
+                <!-- Guest Information -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Guest Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                            <input type="text" id="firstName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                            <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                            <input type="text" id="lastName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                            <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Requests -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Special Requests</h3>
+                    <textarea id="specialRequests" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="Any special requests or preferences..."></textarea>
+                </div>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Booking Summary</h3>
+                    <div id="bookingSummary">
+                        <!-- Booking summary will be loaded here -->
+                    </div>
+                    
+                    <div class="mt-6 space-y-3">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="text-sm text-gray-600 mb-1">Hotel</div>
+                            <div class="font-medium text-gray-900" id="hotelName">Loading...</div>
+                            <div class="text-xs text-gray-500" id="hotelDates">Loading...</div>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Subtotal</span>
+                                <span id="subtotal" class="text-sm font-medium">₹0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Taxes & Fees (12%)</span>
+                                <span id="taxes" class="text-sm font-medium">₹0</span>
+                        </div>
+                        </div>
+                        
+                        <div class="border-t pt-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-semibold text-gray-900">Total Amount</span>
+                                <span id="totalAmount" class="text-xl font-bold text-primary-600">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="proceedToPayment" class="w-full mt-2 bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-md transition-colors">
+                        Proceed to Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedHotel = null;
+        let bookingData = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHotelDetails();
+            setupEventListeners();
+            
+            // Ensure booking summary is updated after a short delay
+            setTimeout(() => {
+                if (selectedHotel && selectedHotel.name) {
+                    updateBookingSummary();
+                }
+            }, 1000);
+        });
+
+
+
+        async function loadHotelDetails() {
+            // Try to get hotel data from localStorage (set by hotels page)
+            let hotelData = {};
+            try {
+                hotelData = JSON.parse(localStorage.getItem('selectedHotel') || '{}');
+            } catch (e) { hotelData = {}; }
+
+            // Get URL parameters for dates and guest info
+            const urlParams = new URLSearchParams(window.location.search);
+            const propertyToken = urlParams.get('property_token');
+            const hotelName = urlParams.get('hotel_name') || '';
+            const checkInDate = urlParams.get('check_in_date') || '';
+            const checkOutDate = urlParams.get('check_out_date') || '';
+            const guests = urlParams.get('guests') || '2 Adults, 1 Room';
+
+            // If no hotelData or no name, try to get property_token from URL
+            if (!hotelData || !hotelData.name) {
+                if (propertyToken) {
+                    // Fetch hotel details from backend using property_token
+                    try {
+                        const params = new URLSearchParams({
+                            property_token: propertyToken,
+                            q: hotelName,
+                            check_in_date: checkInDate,
+                            check_out_date: checkOutDate,
+                            currency: 'USD',
+                            gl: 'us',
+                            hl: 'en'
+                        });
+                        const resp = await fetch(`/api/hotel-details?${params.toString()}`);
+                        const details = await resp.json();
+                        if (!details.error) {
+                            // Add URL parameters to the hotel data
+                            selectedHotel = {
+                                ...details,
+                                check_in: checkInDate,
+                                check_out: checkOutDate,
+                                guests: guests
+                            };
+                            displayHotelDetails(selectedHotel);
+                            updateBookingSummary();
+                            return;
+                        } else {
+                            showHotelError(details.error || 'Could not load hotel details.');
+                            return;
+                        }
+                    } catch (e) {
+                        showHotelError('Could not load hotel details.');
+                        return;
+                    }
+                } else {
+                    showHotelError('No hotel selected.');
+                    return;
+                }
+            }
+            
+            // Update hotelData with URL parameters if available
+            selectedHotel = {
+                ...hotelData,
+                check_in: checkInDate || hotelData.check_in,
+                check_out: checkOutDate || hotelData.check_out,
+                guests: guests || hotelData.guests || '2 Adults, 1 Room'
+            };
+            // Display hotel details directly from stored data
+            displayHotelDetails(selectedHotel);
+            updateBookingSummary();
+            
+            // Try to fetch additional details from backend if property_token exists
+            if (hotelData.property_token || propertyToken) {
+                try {
+                    const params = new URLSearchParams({
+                        property_token: propertyToken || hotelData.property_token,
+                        q: hotelName || hotelData.name || '',
+                        check_in_date: checkInDate || hotelData.check_in || '',
+                        check_out_date: checkOutDate || hotelData.check_out || '',
+                        adults: guests || hotelData.guests || '2',
+                        currency: 'USD',
+                        gl: 'us',
+                        hl: 'en'
+                    });
+                    const resp = await fetch(`/api/hotel-details?${params.toString()}`);
+                    const details = await resp.json();
+                    if (!details.error) {
+                        // Merge with existing data and preserve URL parameters
+                        selectedHotel = {
+                            ...selectedHotel,
+                            ...details,
+                            check_in: checkInDate || selectedHotel.check_in,
+                            check_out: checkOutDate || selectedHotel.check_out,
+                            guests: guests || selectedHotel.guests
+                        };
+                        displayHotelDetails(selectedHotel);
+                        updateBookingSummary();
+                    }
+                } catch (e) {
+                    console.log('Could not fetch additional hotel details:', e);
+                    // Continue with stored data
+                }
+            }
+        }
+        
+        // Show a user-friendly error message in the hotel details section
+        function showHotelError(message) {
+            const hotelDetailsDiv = document.getElementById('hotelDetails');
+            if (hotelDetailsDiv) {
+                hotelDetailsDiv.innerHTML = `<div class="bg-red-100 text-red-700 p-4 rounded">${message}</div>`;
+            } else {
+                alert(message);
+            }
+        }
+
+        function displayHotelDetails(details) {
+            // Log the full SerpApi response for debugging
+            console.log('SerpApi hotel details:', details);
+            const hotelDetailsDiv = document.getElementById('hotelDetails');
+            const nights = calculateNights(selectedHotel.check_in, selectedHotel.check_out);
+            
+            // Use details if available, otherwise fall back to selectedHotel data
+            const hotel = details || selectedHotel;
+            
+            // Images carousel
+            let imagesHtml = '';
+            if (hotel.images && hotel.images.length > 0) {
+                imagesHtml = `<div class="flex gap-2 overflow-x-auto mb-4">` +
+                    hotel.images.slice(0,5).map(img => `<img src="${img.thumbnail || img}" class="w-32 h-20 object-cover rounded">`).join('') +
+                    `</div>`;
+            } else if (hotel.thumbnail) {
+                imagesHtml = `<div class="mb-4"><img src="${hotel.thumbnail}" class="w-full h-48 object-cover rounded"></div>`;
+            }
+            
+            // Amenities
+            let amenitiesHtml = '';
+            if (hotel.amenities && hotel.amenities.length > 0) {
+                amenitiesHtml = `
+                    <div class="mb-4">
+                        <h4 class="text-sm font-semibold text-gray-800 mb-2">Amenities</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${hotel.amenities.slice(0,8).map(a => `<span class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-medium flex items-center"><i class="ri-checkbox-circle-line mr-1.5 text-blue-500"></i>${a}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Reviews
+            let reviewsHtml = '';
+            if (hotel.other_reviews && hotel.other_reviews.length > 0) {
+                reviewsHtml = `
+                    <div class="mb-4">
+                        <h4 class="text-sm font-semibold text-gray-800 mb-2">Guest Reviews</h4>
+                        <div class="space-y-2">
+                            ${hotel.other_reviews.slice(0,2).map(r => `
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="flex items-center mb-1">
+                                        <span class="font-medium text-sm text-gray-800">${r.source}</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600">${r.user_review?.comment || ''}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (hotel.reviews) {
+                reviewsHtml = `
+                    <div class="mb-4">
+                        <h4 class="text-sm font-semibold text-gray-800 mb-2">Guest Reviews</h4>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="text-sm text-gray-600">${hotel.reviews} reviews available</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Nearby places
+            let nearbyHtml = '';
+            if (hotel.nearby_places && hotel.nearby_places.length > 0) {
+                nearbyHtml = `
+                    <div class="mb-4">
+                        <h4 class="text-sm font-semibold text-gray-800 mb-2">Nearby Places</h4>
+                        <div class="space-y-2">
+                            ${hotel.nearby_places.slice(0,2).map(p => `
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="ri-map-pin-line mr-2 text-blue-500"></i>
+                                    <span>${p.name} (${p.category})</span>
+                                    ${p.description ? `<span class="text-gray-500 ml-2">- ${p.description}</span>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Room/rate info - use actual SerpAPI data
+            let price = '';
+            let total = '';
+            
+            // Get price from SerpAPI data structure
+            if (hotel.rate_per_night && hotel.rate_per_night.lowest) {
+                price = hotel.rate_per_night.lowest;
+            } else if (hotel.rate_per_night && hotel.rate_per_night.highest) {
+                price = hotel.rate_per_night.highest;
+            } else if (hotel.price) {
+                price = hotel.price;
+            }
+            
+            if (hotel.total_rate && hotel.total_rate.lowest) {
+                total = hotel.total_rate.lowest;
+            } else if (hotel.total_rate && hotel.total_rate.highest) {
+                total = hotel.total_rate.highest;
+            }
+            
+            let hotelClass = hotel.hotel_class || hotel.type || '';
+            let rating = hotel.overall_rating || hotel.rating || '';
+            let address = hotel.address || '';
+            let phone = hotel.phone || '';
+            let checkin = hotel.check_in_time || '';
+            let checkout = hotel.check_out_time || '';
+            let description = hotel.description || '';
+            
+            hotelDetailsDiv.innerHTML = `
+                ${imagesHtml}
+                <div class="bg-white rounded-lg p-6 shadow-sm border">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-3">${hotel.name || selectedHotel.name}</h2>
+                    
+                    <div class="flex items-center mb-3">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full mr-3">${hotelClass}</span>
+                        ${rating ? `<div class="flex items-center text-yellow-500"><i class="ri-star-fill mr-1"></i><span class="text-gray-700 font-medium">${rating}</span></div>` : ''}
+                    </div>
+                    
+                    <div class="space-y-2 mb-4">
+                        ${address ? `<div class="flex items-start text-gray-600"><i class="ri-map-pin-line mr-2 mt-0.5 text-blue-500"></i><span>${address}</span></div>` : ''}
+                        ${phone ? `<div class="flex items-center text-gray-600"><i class="ri-phone-line mr-2 text-blue-500"></i><span>${phone}</span></div>` : ''}
+                        ${checkin && checkout ? `<div class="flex items-center text-gray-600"><i class="ri-time-line mr-2 text-blue-500"></i><span>Check-in: ${checkin} · Check-out: ${checkout}</span></div>` : ''}
+                    </div>
+                    
+                    ${description ? `<div class="text-gray-700 text-sm mb-4 leading-relaxed">${description}</div>` : ''}
+                    
+                    ${amenitiesHtml}
+                    
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900" id="hotelPriceDisplay">${price || '₹5,000/night'}</div>
+                                <div class="text-sm text-gray-600" id="hotelTotalDisplay">${total ? `Total: ${total}` : 'Total: ₹5,000'}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-600">${nights} night${nights > 1 ? 's' : ''}</div>
+                                <div class="text-lg font-semibold text-gray-900">${selectedHotel.guests || '2 Adults, 1 Room'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${reviewsHtml}
+                    ${nearbyHtml}
+                </div>
+            `;
+        }
+
+        function updateBookingSummary() {
+            console.log('updateBookingSummary called with selectedHotel:', selectedHotel);
+            
+            // Calculate nights - ensure we have valid dates
+            let nights = 1;
+            // Prefer check_in_date/check_out_date from URL if available
+            const urlParams = new URLSearchParams(window.location.search);
+            const checkInDate = urlParams.get('check_in_date') || selectedHotel.check_in;
+            const checkOutDate = urlParams.get('check_out_date') || selectedHotel.check_out;
+            if (checkInDate && checkOutDate) {
+                nights = calculateNights(checkInDate, checkOutDate);
+            }
+            
+            // Extract price from SerpAPI data structure
+            let pricePerNight = 0;
+            let originalPrice = '';
+            
+            // Try different price fields from SerpAPI response
+            if (selectedHotel.rate_per_night && selectedHotel.rate_per_night.lowest) {
+                originalPrice = selectedHotel.rate_per_night.lowest;
+                console.log('Found rate_per_night.lowest:', originalPrice);
+            } else if (selectedHotel.rate_per_night && selectedHotel.rate_per_night.highest) {
+                originalPrice = selectedHotel.rate_per_night.highest;
+                console.log('Found rate_per_night.highest:', originalPrice);
+            } else if (selectedHotel.price) {
+                originalPrice = selectedHotel.price;
+                console.log('Found price:', originalPrice);
+            } else if (selectedHotel.total_rate && selectedHotel.total_rate.lowest) {
+                originalPrice = selectedHotel.total_rate.lowest;
+                console.log('Found total_rate.lowest:', originalPrice);
+            } else {
+                console.log('No price found in hotel data. Available fields:', Object.keys(selectedHotel));
+            }
+            
+            console.log('Original price from API:', originalPrice);
+            
+            if (originalPrice) {
+                // Parse the price string (e.g., "$89", "₹2,500", "89")
+                const priceStr = originalPrice.toString();
+                const cleanPrice = priceStr.replace(/[^\d.]/g, '');
+                const parsedPrice = parseFloat(cleanPrice) || 0;
+                
+                console.log('Parsed price:', parsedPrice);
+                
+                if (parsedPrice > 0) {
+                    // Check if price is in USD (usually starts with $ or is a low number)
+                    if (priceStr.includes('$') || (parsedPrice < 1000 && !priceStr.includes('₹'))) {
+                        pricePerNight = Math.round(parsedPrice * 83); // Convert USD to INR
+                        console.log('Converted USD to INR:', pricePerNight);
+                    } else {
+                        pricePerNight = parsedPrice; // Already in INR
+                        console.log('Using INR price:', pricePerNight);
+                    }
+                }
+            }
+            
+            // If no price found, use default based on hotel type
+            if (pricePerNight === 0) {
+                const hotelName = (selectedHotel.name || '').toLowerCase();
+                if (hotelName.includes('resort') || hotelName.includes('luxury') || hotelName.includes('5-star')) {
+                    pricePerNight = 8000; // ₹8,000 for resorts
+                } else if (hotelName.includes('budget') || hotelName.includes('hostel') || hotelName.includes('3-star')) {
+                    pricePerNight = 3000; // ₹3,000 for budget
+                } else {
+                    pricePerNight = 5000; // ₹5,000 default
+                }
+                console.log('Using default price:', pricePerNight);
+            }
+            
+            const basePrice = Math.round(pricePerNight * nights);
+            const taxes = Math.round(basePrice * 0.12); // 12% tax
+            const total = basePrice + taxes;
+            
+            console.log('Final calculations:', { pricePerNight, basePrice, taxes, total });
+
+            // Update the booking summary
+            document.getElementById('subtotal').textContent = `₹${basePrice.toLocaleString()}`;
+            document.getElementById('taxes').textContent = `₹${taxes.toLocaleString()}`;
+            document.getElementById('totalAmount').textContent = `₹${total.toLocaleString()}`;
+            // Update hotel name and dates in summary
+            document.getElementById('hotelName').textContent = selectedHotel.name || 'Hotel';
+            document.getElementById('hotelDates').textContent = `${nights} night${nights > 1 ? 's' : ''} · ${selectedHotel.guests || '2 Adults, 1 Room'}`;
+            
+            // Update hotel price display in details section
+            const hotelPriceElement = document.getElementById('hotelPriceDisplay');
+            const hotelTotalElement = document.getElementById('hotelTotalDisplay');
+            if (hotelPriceElement) {
+                hotelPriceElement.textContent = `₹${pricePerNight.toLocaleString()}/night`;
+            }
+            if (hotelTotalElement) {
+                hotelTotalElement.textContent = `Total: ₹${total.toLocaleString()}`;
+            }
+
+            // Update booking data
+            bookingData = {
+                type: 'hotel',
+                service: selectedHotel.name,
+                location: selectedHotel.address,
+                check_in: selectedHotel.check_in,
+                check_out: selectedHotel.check_out,
+                guests: selectedHotel.guests,
+                nights: nights,
+                base_price: basePrice,
+                taxes: taxes,
+                total: total,
+                hotel: selectedHotel
+            };
+        }
+
+        function setupEventListeners() {
+            document.getElementById('proceedToPayment').addEventListener('click', function() {
+                if (validateGuestInfo()) {
+                    proceedToPayment();
+                }
+            });
+        }
+
+        function validateGuestInfo() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!firstName || !lastName || !email || !phone) {
+                alert('Please fill in all guest information fields.');
+                return false;
+            }
+
+            if (!isValidEmail(email)) {
+                alert('Please enter a valid email address.');
+                return false;
+            }
+
+            return true;
+        }
+
+        function proceedToPayment() {
+            // Get check-in/check-out dates from URL parameters or selectedHotel
+            const urlParams = new URLSearchParams(window.location.search);
+            const checkInDate = urlParams.get('check_in_date') || selectedHotel.check_in;
+            const checkOutDate = urlParams.get('check_out_date') || selectedHotel.check_out;
+            const nights = calculateNights(checkInDate, checkOutDate);
+            
+            // Store guest information
+            bookingData.contact = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                specialRequests: document.getElementById('specialRequests').value.trim()
+            };
+
+            // Ensure all hotel data is properly stored
+            bookingData.check_in = checkInDate;
+            bookingData.check_out = checkOutDate;
+            bookingData.nights = nights;
+            bookingData.guests = selectedHotel.guests || '2 Adults, 1 Room';
+            bookingData.hotel_name = selectedHotel.name;
+            bookingData.hotel_address = selectedHotel.address;
+            bookingData.room_type = selectedHotel.room_type || selectedHotel.type || null; // Only include if available
+            bookingData.hotel_rating = selectedHotel.overall_rating || selectedHotel.rating || null;
+            
+            console.log('Storing booking data:', bookingData);
+
+            // Store booking data
+            localStorage.setItem('currentBooking', JSON.stringify(bookingData));
+            
+            // Redirect to payment
+            window.location.href = '/booking/payment.html';
+        }
+
+        // Helper functions
+        function calculateNights(checkIn, checkOut) {
+            if (!checkIn || !checkOut) return 1;
+            
+            try {
+                const start = new Date(checkIn);
+                const end = new Date(checkOut);
+                
+                // Check if dates are valid
+                if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                    return 1;
+                }
+                
+                const diffTime = Math.abs(end - start);
+                const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                // Ensure at least 1 night
+                return Math.max(nights, 1);
+            } catch (error) {
+                console.log('Error calculating nights:', error);
+                return 1;
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<span class="text-yellow-400">★</span>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<span class="text-yellow-400">☆</span>';
+            }
+            
+            return stars;
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
+</body>
+</html>

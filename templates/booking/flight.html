@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Booking - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="../index.html" class="text-2xl font-bold text-primary-600">TTravels</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="../index.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="../flights.html" class="text-primary-600 hover:text-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Flights</a>
+                        <a href="../hotels.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Hotels</a>
+                        <a href="../trains.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Trains</a>
+                        <a href="../buses.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Buses</a>
+                        <a href="../cars.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Cars</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6 space-x-3">
+                        <a href="../dashboard.html" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Trips</a>
+                        {% if logged_in %}
+                            <span class="text-gray-700 px-3 py-2 text-sm">Welcome, {{ username }}</span>
+                            <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Logout</a>
+                        {% else %}
+                            <a href="/login" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Login</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Booking Progress -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-center space-x-8">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
+                    <span class="ml-2 text-primary-600 font-medium">Flight Details</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-300"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">2</div>
+                    <span class="ml-2 text-gray-600">Passenger Info</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-300"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">3</div>
+                    <span class="ml-2 text-gray-600">Payment</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Left Column - Booking Form -->
+            <div class="lg:w-2/3">
+                <!-- Flight Details -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Selected Flight</h2>
+                    <div class="border border-gray-200 rounded-lg p-4" id="selectedFlightCard">
+                        <!-- Flight details will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Passenger Information -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Passenger Information</h2>
+                    
+                    <div id="passengerForms">
+                        <!-- Passenger 1 -->
+                        <div class="border border-gray-200 rounded-lg p-4 mb-4">
+                            <h3 class="font-medium text-gray-900 mb-4">Passenger 1 (Adult)</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                        <option>Mr.</option>
+                                        <option>Ms.</option>
+                                        <option>Mrs.</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter first name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter last name">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                                    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="addPassenger" class="text-primary-600 hover:text-primary-700 font-medium">+ Add Another Passenger</button>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Contact Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <input type="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter email address">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                            <input type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter mobile number">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column - Booking Summary -->
+            <div class="lg:w-1/3">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Booking Summary</h2>
+                    <div id="bookingSummary" class="space-y-3 mb-6">
+                        <!-- Will be populated by JS -->
+                    </div>
+                    <button onclick="proceedToPayment()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+                        Proceed to Payment
+                    </button>
+                    
+                    <div class="mt-4 text-center">
+                        <p class="text-sm text-gray-600">Secure booking with 256-bit SSL encryption</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let passengerCount = 1;
+        let selectedFlight = null;
+        let baseFare = 0;
+        let taxes = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load selected flight from localStorage
+            try {
+                const booking = JSON.parse(localStorage.getItem('currentBooking'));
+                if (booking && booking.type === 'flight' && booking.flight) {
+                    selectedFlight = booking.flight;
+                } else {
+                    // fallback for legacy or direct access
+                    selectedFlight = null;
+                }
+            } catch (e) { selectedFlight = null; }
+
+            if (!selectedFlight) {
+                document.getElementById('selectedFlightCard').innerHTML = '<div class="text-red-600">No flight selected. Please go back and select a flight.</div>';
+                document.getElementById('bookingSummary').innerHTML = '<div class="text-red-600">No flight selected.</div>';
+                return;
+            }
+
+            // Populate flight details
+            renderSelectedFlight(selectedFlight);
+            renderBookingSummary(selectedFlight);
+
+            // Set base fare and taxes
+            baseFare = Number(selectedFlight.price) || 0;
+            taxes = Math.round(baseFare * 0.18); // 18% GST as example
+
+            setupAddPassenger();
+            setupAddons();
+            updateTotal();
+        });
+        // Render the booking summary with real flight data
+        function renderBookingSummary(flight) {
+            const airline = flight.airline || 'Airline';
+            const flightNumber = flight.flight_number || '';
+            const origin = flight.origin || '--';
+            const destination = flight.destination || '--';
+            const dep = flight.departure_time || '--';
+            const arr = flight.arrival_time || '--';
+            const duration = flight.duration_minutes ? `${Math.floor(flight.duration_minutes/60)}h ${flight.duration_minutes%60}m` : (flight.duration || '--');
+            const stops = flight.stops === 0 ? 'Non-stop' : (flight.stops === 1 ? '1 stop' : `${flight.stops} stops`);
+            const price = flight.price ? `₹${Number(flight.price).toLocaleString()}` : '--';
+            const refundable = flight.refundable ? 'Refundable' : 'Non-refundable';
+
+            let summary = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-semibold text-gray-900">${airline}</div>
+                        <div class="text-sm text-gray-600">${flightNumber}</div>
+                        <div class="text-sm text-gray-600">${origin} → ${destination}</div>
+                        <div class="text-xs text-gray-500">${dep} - ${arr} (${duration}, ${stops})</div>
+                        <div class="text-xs text-gray-500">${refundable}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-primary-600">${price}</div>
+                        <div class="text-xs text-gray-500">per person</div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-3">
+                    <span class="text-gray-600">Base Fare (1 Adult)</span>
+                    <span class="font-medium">${price}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Taxes & Fees</span>
+                    <span class="font-medium" id="taxesTotal">₹0</span>
+                </div>
+                <div class="border-t pt-3">
+                    <div class="flex justify-between text-lg font-semibold">
+                        <span>Total Amount</span>
+                        <span class="text-primary-600" id="totalAmount">₹0</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('bookingSummary').innerHTML = summary;
+            // Re-attach event listeners and update total after rendering summary
+            setupAddons();
+            updateTotal();
+        }
+
+        function renderSelectedFlight(flight) {
+            // Debug: log the flight object to help identify available properties
+            console.log('DEBUG selectedFlight:', flight);
+            const airline = flight.airline || 'Airline';
+            const flightNumber = flight.flight_number || '';
+            const origin = flight.origin || '--';
+            const destination = flight.destination || '--';
+            const dep = flight.departure_time || '--';
+            const arr = flight.arrival_time || '--';
+            const duration = flight.duration_minutes ? `${Math.floor(flight.duration_minutes/60)}h ${flight.duration_minutes%60}m` : (flight.duration || '--');
+            const stops = flight.stops === 0 ? 'Non-stop' : (flight.stops === 1 ? '1 stop' : `${flight.stops} stops`);
+            const price = flight.price ? `₹${Number(flight.price).toLocaleString()}` : '--';
+            const refundable = flight.refundable ? 'Refundable' : 'Non-refundable';
+
+            // Try to find booking/fare options from any property
+            let bookingOptions = [];
+            if (flight.booking_options && Array.isArray(flight.booking_options) && flight.booking_options.length > 0) {
+                bookingOptions = flight.booking_options;
+            } else if (flight.fare_options && Array.isArray(flight.fare_options) && flight.fare_options.length > 0) {
+                bookingOptions = flight.fare_options;
+            } else {
+                // Try to find any array property with price and fare/class info
+                for (const key in flight) {
+                    if (Array.isArray(flight[key]) && flight[key].length > 0 && (flight[key][0].price || flight[key][0].fare_name || flight[key][0].class_name)) {
+                        bookingOptions = flight[key];
+                        break;
+                    }
+                }
+            }
+
+            // Flight summary (top section)
+            let html = `
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-primary-600 font-semibold text-sm">${airline[0] || 'A'}</span>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">${airline}</h3>
+                            <p class="text-sm text-gray-600">${flightNumber}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-bold text-gray-900">${price}</p>
+                        <p class="text-sm text-gray-600">per person</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-center">
+                        <p class="text-lg font-semibold text-gray-900">${dep}</p>
+                        <p class="text-sm text-gray-600">${origin}</p>
+                    </div>
+                    <div class="flex-1 mx-4">
+                        <div class="flex items-center">
+                            <div class="flex-1 border-t border-gray-300"></div>
+                            <div class="px-3 text-center">
+                                <p class="text-sm text-gray-600">${duration}</p>
+                                <p class="text-xs text-gray-500">${stops}</p>
+                            </div>
+                            <div class="flex-1 border-t border-gray-300"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-lg font-semibold text-gray-900">${arr}</p>
+                        <p class="text-sm text-gray-600">${destination}</p>
+                    </div>
+                </div>
+                <div class="mt-2 text-xs text-right text-gray-500">${refundable}</div>
+            `;
+
+            // --- Booking Option Section ---
+            if (bookingOptions.length > 0) {
+                const opt = bookingOptions[0];
+                html += `
+                <div class="mt-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Booking Options</h4>
+                    <div class="border rounded-lg p-4 bg-gray-50 mb-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <div>
+                                <div class="font-semibold text-gray-900">${opt.fare_name || opt.class_name || 'Economy'}</div>
+                                <div class="text-xs text-gray-600">${opt.seller || 'Book with Airline'}</div>
+                            </div>
+                            <div class="text-xl font-bold text-primary-600">${opt.price ? `₹${Number(opt.price).toLocaleString()}` : '--'} <span class="text-xs font-normal text-gray-600">per passenger</span></div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="font-semibold text-gray-800">Features:</div>
+                            <ul class="text-sm text-gray-700 list-disc ml-5">
+                                ${opt.free_cancellation ? '<li>Free cancellation</li>' : ''}
+                                ${opt.no_change_fee ? '<li>No change fee</li>' : ''}
+                                ${opt.features ? opt.features.map(f => `<li>${f}</li>`).join('') : ''}
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">Baggage:</div>
+                            <ul class="text-sm text-gray-700 list-disc ml-5">
+                                ${opt.carry_on ? `<li>${opt.carry_on}</li>` : ''}
+                                ${opt.checked_bag ? `<li>${opt.checked_bag}</li>` : ''}
+                                ${opt.baggage ? opt.baggage.map(b => `<li>${b}</li>`).join('') : ''}
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // --- Baggage Information Section ---
+            const baggage = flight.baggage_prices || {};
+            if (Object.keys(baggage).length > 0 || (bookingOptions[0] && (bookingOptions[0].carry_on || bookingOptions[0].checked_bag))) {
+                html += `
+                <div class="mt-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Baggage Information</h4>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1 border rounded-lg p-4 bg-gray-50">
+                            <div class="font-semibold text-gray-900 mb-1">Carry-on</div>
+                            <ul class="text-sm text-gray-700 list-disc ml-5">
+                                ${bookingOptions[0]?.carry_on ? `<li>${bookingOptions[0].carry_on}</li>` : ''}
+                                ${baggage.carry_on ? `<li>${baggage.carry_on}</li>` : ''}
+                                ${baggage.carry_on_dimensions ? `<li>Dimensions: ${baggage.carry_on_dimensions}</li>` : ''}
+                            </ul>
+                        </div>
+                        <div class="flex-1 border rounded-lg p-4 bg-gray-50">
+                            <div class="font-semibold text-gray-900 mb-1">Checked Baggage</div>
+                            <ul class="text-sm text-gray-700 list-disc ml-5">
+                                ${bookingOptions[0]?.checked_bag ? `<li>${bookingOptions[0].checked_bag}</li>` : ''}
+                                ${baggage.checked_bag ? `<li>${baggage.checked_bag}</li>` : ''}
+                                ${baggage.checked_bag_price ? `<li>1st checked bag: ${baggage.checked_bag_price}</li>` : ''}
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // Booking options cards (like screenshot)
+            if (bookingOptions.length > 0) {
+                html += `<div class="mt-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Booking options</h4>
+                    <div class="flex flex-col md:flex-row gap-4">`;
+                bookingOptions.forEach(option => {
+                    html += `
+                    <div class="flex-1 border rounded-lg shadow p-4 flex flex-col">
+                        <div class="flex items-center mb-2">
+                            <span class="font-semibold text-gray-900 text-base flex-1">${option.fare_name || option.class_name || 'Fare Option'}</span>
+                            <span class="text-xl font-bold text-gray-900">${option.price ? `₹${Number(option.price).toLocaleString()}` : '--'}</span>
+                        </div>
+                        <ul class="text-sm text-gray-700 mb-2 space-y-1">
+                            <li><span class="${option.refundable ? 'text-green-600' : 'text-red-600'} font-semibold mr-1">${option.refundable ? '✔' : '✘'}</span> ${option.refundable ? 'Refundable' : 'No refunds'}</li>
+                            <li><span class="${option.ticket_changes ? 'text-green-600' : 'text-red-600'} font-semibold mr-1">${option.ticket_changes ? '✔' : '✘'}</span> Ticket changes${option.ticket_changes_fee ? ` for a fee (${option.ticket_changes_fee})` : (option.ticket_changes ? ' allowed' : ' not allowed')}</li>
+                            <li><span class="${option.seat_selection ? 'text-green-600' : 'text-red-600'} font-semibold mr-1">${option.seat_selection ? '✔' : '✘'}</span> Seat selection${option.seat_selection_fee ? ` for a fee (${option.seat_selection_fee})` : ''}</li>
+                            <li><span class="text-green-600 font-semibold mr-1">✔</span> ${option.seat_type ? option.seat_type : 'Standard seat'}</li>
+                            <li><span class="text-green-600 font-semibold mr-1">✔</span> ${option.carry_on ? option.carry_on : '1 free carry-on'}</li>
+                            <li><span class="text-green-600 font-semibold mr-1">✔</span> ${option.checked_bag ? option.checked_bag : '1 checked bag'}</li>
+                            ${option.amenities ? `<li><span class="text-green-600 font-semibold mr-1">✔</span> ${option.amenities.join(', ')}</li>` : ''}
+                        </ul>
+                        <button class="mt-auto bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">Continue</button>
+                    </div>`;
+                });
+                html += `</div></div>`;
+            } else {
+                html += `<div class="mt-6 text-gray-500">No booking options available for this flight.</div>`;
+            }
+
+            document.getElementById('selectedFlightCard').innerHTML = html;
+        }
+
+        function setupAddPassenger() {
+            document.getElementById('addPassenger').addEventListener('click', function() {
+                passengerCount++;
+                const passengerForm = createPassengerForm(passengerCount);
+                document.getElementById('passengerForms').insertAdjacentHTML('beforeend', passengerForm);
+                updateTotal();
+            });
+        }
+
+        function createPassengerForm(number) {
+            return `
+                <div class="border border-gray-200 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-medium text-gray-900">Passenger ${number} (Adult)</h3>
+                        <button onclick="removePassenger(this)" class="text-red-600 hover:text-red-700 text-sm">Remove</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>Mr.</option>
+                                <option>Ms.</option>
+                                <option>Mrs.</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter first name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter last name">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                            <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function removePassenger(button) {
+            button.closest('.border').remove();
+            passengerCount--;
+            updateTotal();
+        }
+
+        function setupAddons() {
+            // Only target add-on checkboxes in the Add-ons & Services section
+            const addonsSection = document.querySelector('.space-y-4');
+            if (!addonsSection) return;
+            const checkboxes = addonsSection.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                // Remove previous listeners to avoid duplicates
+                checkbox.removeEventListener('change', updateTotal);
+                checkbox.addEventListener('change', updateTotal);
+            });
+        }
+
+        function updateTotal() {
+            // Use selected flight price
+            const fare = baseFare * passengerCount;
+            const tax = Math.round((baseFare * 0.18) * passengerCount); // Always recalculate taxes
+            let addonsTotal = 0;
+
+            // Only count checked add-on checkboxes in the Add-ons section
+            const addonsSection = document.querySelector('.space-y-4');
+            if (addonsSection) {
+                const checkboxes = addonsSection.querySelectorAll('input[type="checkbox"]:checked');
+                checkboxes.forEach(checkbox => {
+                    // Find the price span within the same flex container
+                    const priceSpan = checkbox.closest('.flex').querySelector('span:last-child');
+                    if (priceSpan) {
+                        const priceText = priceSpan.textContent;
+                        // Extract number from price text (e.g., "₹300" -> 300)
+                        const price = parseInt(priceText.replace(/[^\d]/g, ''));
+                        if (!isNaN(price)) {
+                            addonsTotal += price;
+                        }
+                    }
+                });
+            }
+
+            const total = fare + tax + addonsTotal;
+
+            // Update summary fields
+            const addonsElem = document.getElementById('addonsTotal');
+            if (addonsElem) addonsElem.textContent = `₹${addonsTotal.toLocaleString()}`;
+            const taxesElem = document.getElementById('taxesTotal');
+            if (taxesElem) taxesElem.textContent = `₹${tax.toLocaleString()}`;
+            const totalElem = document.getElementById('totalAmount');
+            if (totalElem) totalElem.textContent = `₹${total.toLocaleString()}`;
+        }
+
+        function proceedToPayment() {
+            // Calculate add-ons total
+            let addonsTotal = 0;
+            const addonsSection = document.querySelector('.space-y-4');
+            if (addonsSection) {
+                const checkboxes = addonsSection.querySelectorAll('input[type="checkbox"]:checked');
+                checkboxes.forEach(checkbox => {
+                    const priceSpan = checkbox.closest('.flex').querySelector('span:last-child');
+                    if (priceSpan) {
+                        const priceText = priceSpan.textContent;
+                        const price = parseInt(priceText.replace(/[^\d]/g, ''));
+                        if (!isNaN(price)) {
+                            addonsTotal += price;
+                        }
+                    }
+                });
+            }
+
+            // Store booking data with complete flight information
+            const bookingData = {
+                type: 'flight',
+                service: selectedFlight ? `${selectedFlight.airline} ${selectedFlight.flight_number}` : 'Flight Booking',
+                route: selectedFlight ? `${selectedFlight.origin_name} → ${selectedFlight.destination_name}` : 'N/A',
+                date: selectedFlight ? selectedFlight.departure_time : 'N/A',
+                passengers: passengerCount,
+                amount: document.getElementById('totalAmount').textContent,
+                addons: getSelectedAddons(),
+                addonsTotal: addonsTotal,
+                flight: selectedFlight,
+                departureTime: selectedFlight ? selectedFlight.departure_time : 'N/A',
+                arrivalTime: selectedFlight ? selectedFlight.arrival_time : 'N/A',
+                duration: selectedFlight ? selectedFlight.duration : 'N/A',
+                airline: selectedFlight ? selectedFlight.airline : 'N/A',
+                flightNumber: selectedFlight ? selectedFlight.flight_number : 'N/A'
+            };
+            localStorage.setItem('currentBooking', JSON.stringify(bookingData));
+            window.location.href = 'payment.html';
+        }
+
+        function getSelectedAddons() {
+            const addons = [];
+            const addonsSection = document.querySelector('.space-y-4');
+            if (addonsSection) {
+                const checkboxes = addonsSection.querySelectorAll('input[type="checkbox"]:checked');
+                checkboxes.forEach(checkbox => {
+                    const label = checkbox.closest('.flex').querySelector('h3').textContent;
+                    const priceSpan = checkbox.closest('.flex').querySelector('span:last-child');
+                    const price = priceSpan ? priceSpan.textContent : '₹0';
+                    addons.push({
+                        name: label,
+                        price: price
+                    });
+                });
+            }
+            return addons;
+        }
+    </script>
+</body>
+</html>

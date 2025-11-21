@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - TTravels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="../index.html" class="text-2xl font-bold text-primary-600">TTravels</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-600">Secure Payment</div>
+                    {% if logged_in %}
+                        <span class="text-sm text-gray-600">Welcome, {{ username }}</span>
+                        <a href="/logout" class="text-red-600 hover:text-red-700 text-sm font-medium">Logout</a>
+                    {% else %}
+                        <a href="/login" class="text-primary-600 hover:text-primary-700 text-sm font-medium">Login</a>
+                    {% endif %}
+                    <div class="flex items-center text-green-600">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        <span class="text-sm font-medium">SSL Secured</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Booking Progress -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-center space-x-8">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">✓</div>
+                    <span class="ml-2 text-green-600 font-medium">Details</span>
+                </div>
+                <div class="w-16 h-1 bg-green-600"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">✓</div>
+                    <span class="ml-2 text-green-600 font-medium">Information</span>
+                </div>
+                <div class="w-16 h-1 bg-green-600"></div>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">3</div>
+                    <span class="ml-2 text-primary-600 font-medium">Payment</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Left Column - Payment Options -->
+            <div class="lg:w-2/3">
+                <!-- Payment Methods -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Choose Payment Method</h2>
+                    
+                    <!-- Payment Method Tabs -->
+                    <div class="border-b border-gray-200 mb-6">
+                        <nav class="-mb-px flex space-x-8">
+                            <button class="payment-tab active border-b-2 border-primary-600 text-primary-600 py-2 px-1 text-sm font-medium" data-tab="card">
+                                Credit/Debit Card
+                            </button>
+                            <button class="payment-tab border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 text-sm font-medium" data-tab="upi">
+                                UPI
+                            </button>
+                            <button class="payment-tab border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 text-sm font-medium" data-tab="netbanking">
+                                Net Banking
+                            </button>
+                            <button class="payment-tab border-b-2 border-transparent text-gray-500 hover:text-gray-700 py-2 px-1 text-sm font-medium" data-tab="wallet">
+                                Wallet
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Card Payment Form -->
+                    <div id="card-payment" class="payment-content">
+                        <div class="grid grid-cols-1 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                                <input type="text" placeholder="1234 5678 9012 3456" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" maxlength="19">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                                    <input type="text" placeholder="MM/YY" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" maxlength="5">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                                    <input type="text" placeholder="123" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" maxlength="3">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                                <input type="text" placeholder="Enter name as on card" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPI Payment Form -->
+                    <div id="upi-payment" class="payment-content hidden">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">UPI ID</label>
+                                <input type="text" placeholder="yourname@upi" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                            </div>
+                            <div class="text-center">
+                                <p class="text-gray-600 mb-4">Or scan QR code with any UPI app</p>
+                                <div class="w-48 h-48 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center mx-auto">
+                                    <span class="text-gray-500">QR Code</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Net Banking Form -->
+                    <div id="netbanking-payment" class="payment-content hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Your Bank</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>Choose your bank</option>
+                                <option>State Bank of India</option>
+                                <option>HDFC Bank</option>
+                                <option>ICICI Bank</option>
+                                <option>Axis Bank</option>
+                                <option>Punjab National Bank</option>
+                                <option>Bank of Baroda</option>
+                                <option>Canara Bank</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Wallet Payment Form -->
+                    <div id="wallet-payment" class="payment-content hidden">
+                        <div class="grid grid-cols-2 gap-4">
+                            <button class="p-4 border border-gray-300 rounded-lg hover:border-primary-500 transition-colors">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <span class="text-blue-600 font-bold">PP</span>
+                                    </div>
+                                    <span class="text-sm font-medium">Paytm</span>
+                                </div>
+                            </button>
+                            <button class="p-4 border border-gray-300 rounded-lg hover:border-primary-500 transition-colors">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <span class="text-purple-600 font-bold">PE</span>
+                                    </div>
+                                    <span class="text-sm font-medium">PhonePe</span>
+                                </div>
+                            </button>
+                            <button class="p-4 border border-gray-300 rounded-lg hover:border-primary-500 transition-colors">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <span class="text-green-600 font-bold">GP</span>
+                                    </div>
+                                    <span class="text-sm font-medium">Google Pay</span>
+                                </div>
+                            </button>
+                            <button class="p-4 border border-gray-300 rounded-lg hover:border-primary-500 transition-colors">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <span class="text-orange-600 font-bold">AP</span>
+                                    </div>
+                                    <span class="text-sm font-medium">Amazon Pay</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Address -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Billing Address</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Address</label>
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" rows="3" placeholder="Enter your full address"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter city">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>Select State</option>
+                                <option>Maharashtra</option>
+                                <option>Delhi</option>
+                                <option>Karnataka</option>
+                                <option>Tamil Nadu</option>
+                                <option>Gujarat</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">PIN Code</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500" placeholder="Enter PIN code">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500">
+                                <option>India</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Order Summary -->
+            <div class="lg:w-1/3">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
+                    
+                    <div id="bookingSummary" class="mb-6">
+                        <!-- Booking details will be loaded here -->
+                    </div>
+
+                    <div class="space-y-3 mb-6 pt-4">
+                        <div class="border-t pt-3">
+                            <div class="flex justify-between text-lg font-semibold">
+                                <span>Total Amount</span>
+                                <span class="text-primary-600" id="finalTotal">₹6,371</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="processPayment()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors mb-4">
+                        Pay Now
+                    </button>
+
+                    <div class="text-center space-y-2">
+                        <div class="flex items-center justify-center text-sm text-gray-600">
+                            <svg class="w-4 h-4 mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            100% Secure Payment
+                        </div>
+                        <div class="flex items-center justify-center space-x-4">
+                            <img src="https://via.placeholder.com/40x25/4285f4/ffffff?text=VISA" alt="Visa" class="h-6">
+                            <img src="https://via.placeholder.com/40x25/eb001b/ffffff?text=MC" alt="Mastercard" class="h-6">
+                            <img src="https://via.placeholder.com/40x25/00a1e0/ffffff?text=AMEX" alt="American Express" class="h-6">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookingSummary();
+            setupPaymentTabs();
+            setupCardFormatting();
+        });
+
+        function loadBookingSummary() {
+            const bookingData = JSON.parse(localStorage.getItem('currentBooking') || '{}');
+            const summaryContainer = document.getElementById('bookingSummary');
+            
+            if (bookingData.type) {
+                let serviceDetails = '';
+                    if (bookingData.type === 'hotel') {
+                        // Format check-in/check-out dates
+                        function formatDate(dateStr) {
+                            if (!dateStr || dateStr === 'N/A') return 'N/A';
+                            try {
+                                const d = new Date(dateStr);
+                                if (isNaN(d.getTime())) return dateStr;
+                                return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                            } catch (e) {
+                                return dateStr;
+                            }
+                        }
+                        
+                        // Get check-in/check-out dates with multiple fallbacks
+                        let checkIn = bookingData.check_in || bookingData.check_in_date || 'N/A';
+                        let checkOut = bookingData.check_out || bookingData.check_out_date || 'N/A';
+                        
+                        // Get guest information with multiple fallbacks
+                        let guestsText = 'N/A';
+                        let guestsVal = bookingData.guests || bookingData.adults || '';
+                        if (!guestsVal && bookingData.hotel && bookingData.hotel.guests) {
+                            guestsVal = bookingData.hotel.guests;
+                        }
+                        if (guestsVal && guestsVal !== 'N/A') {
+                            if (typeof guestsVal === 'string') {
+                                guestsText = guestsVal;
+                            } else if (typeof guestsVal === 'number') {
+                                guestsText = guestsVal + (guestsVal === 1 ? ' Guest' : ' Guests');
+                            }
+                        }
+                        
+                        // Get room type with multiple fallbacks, only show if available
+                        let roomType = bookingData.room_type || bookingData.room || bookingData.type || '';
+                        if (!roomType || roomType === 'N/A') {
+                            roomType = null; // Don't show room type if not available
+                        }
+                        
+                        // Debug logging
+                        console.log('Hotel booking data:', {
+                            checkIn, checkOut, guestsText, roomType,
+                            bookingData: bookingData
+                        });
+                        
+                        serviceDetails = `
+                            <div class="text-sm text-gray-600">
+                                <p><strong>Hotel:</strong> ${bookingData.service || bookingData.hotel_name || 'Hotel'}</p>
+                                <p><strong>Address:</strong> ${bookingData.location || bookingData.hotel_address || 'N/A'}</p>
+                                <p><strong>Check-in:</strong> ${formatDate(checkIn)}</p>
+                                <p><strong>Check-out:</strong> ${formatDate(checkOut)}</p>
+                                <p><strong>Nights:</strong> ${bookingData.nights || 1}</p>
+                                <p><strong>Guests:</strong> ${guestsText}</p>
+                                ${roomType ? `<p><strong>Room Type:</strong> ${roomType}</p>` : ''}
+                            </div>
+                        `;
+                } else {
+                    // ...existing code for other types...
+                    switch (bookingData.type) {
+                        case 'flight':
+                            serviceDetails = `
+                                <div class="text-sm text-gray-600">
+                                    <p><strong>Route:</strong> ${bookingData.route || 'N/A'}</p>
+                                    <p><strong>Departure:</strong> ${bookingData.departureTime || 'N/A'}</p>
+                                    <p><strong>Arrival:</strong> ${bookingData.arrivalTime || 'N/A'}</p>
+                                    <p><strong>Duration:</strong> ${bookingData.duration || 'N/A'}</p>
+                                    <p><strong>Passengers:</strong> ${bookingData.passengers || 1}</p>
+                                </div>
+                            `;
+                            break;
+                        case 'train':
+                            // Format passenger list
+                            let passengerList = '';
+                            if (Array.isArray(bookingData.passengers)) {
+                                passengerList = '<ul class="ml-4 list-disc">' + bookingData.passengers.map((p, idx) => {
+                                    if (typeof p === 'object' && p.name) {
+                                        return `<li>${p.name} (${p.age}, ${p.gender}) - ${p.id_type}: ${p.id_number}</li>`;
+                                    } else {
+                                        return `<li>${typeof p === 'string' ? p : JSON.stringify(p)}</li>`;
+                                    }
+                                }).join('') + '</ul>';
+                            } else {
+                                passengerList = bookingData.passengers || 'N/A';
+                            }
+                            // Format date
+                            let trainDate = bookingData.date || (bookingData.train && bookingData.train.departure_date) || 'N/A';
+                            serviceDetails = `
+                                <div class="text-sm text-gray-600">
+                                    <p><strong>Route:</strong> ${bookingData.route || 'N/A'}</p>
+                                    <p><strong>Date:</strong> ${trainDate}</p>
+                                    <p><strong>Departure:</strong> ${bookingData.departure_time || 'N/A'}</p>
+                                    <p><strong>Arrival:</strong> ${bookingData.arrival_time || 'N/A'}</p>
+                                    <p><strong>Class:</strong> ${bookingData.class || 'N/A'}</p>
+                                    <p><strong>Passengers:</strong> ${passengerList}</p>
+                                </div>
+                            `;
+                            break;
+                        case 'bus':
+                            serviceDetails = `
+                                <div class="text-sm text-gray-600">
+                                    <p><strong>Route:</strong> ${bookingData.route || 'N/A'}</p>
+                                    <p><strong>Date:</strong> ${bookingData.date || 'N/A'}</p>
+                                    <p><strong>Departure:</strong> ${bookingData.departure_time || 'N/A'}</p>
+                                    <p><strong>Arrival:</strong> ${bookingData.arrival_time || 'N/A'}</p>
+                                    <p><strong>Bus Type:</strong> ${bookingData.bus_type || 'N/A'}</p>
+                                    <p><strong>Passengers:</strong> ${bookingData.passengers || 1}</p>
+                                </div>
+                            `;
+                            break;
+                        case 'car':
+                            serviceDetails = `
+                                <div class="text-sm text-gray-600">
+                                    <p><strong>Car:</strong> ${bookingData.service || 'N/A'}</p>
+                                    <p><strong>Pickup:</strong> ${bookingData.trip?.pickup_location || 'N/A'}</p>
+                                    <p><strong>Drop:</strong> ${bookingData.trip?.drop_location || 'N/A'}</p>
+                                    <p><strong>Date:</strong> ${bookingData.trip?.pickup_date || 'N/A'}</p>
+                                    <p><strong>Time:</strong> ${bookingData.trip?.pickup_time || 'N/A'}</p>
+                                    <p><strong>Distance:</strong> ${bookingData.distance || 'N/A'} km</p>
+                                </div>
+                            `;
+                            break;
+                        default:
+                            serviceDetails = `
+                                <div class="text-sm text-gray-600">
+                                    <p>Date: ${bookingData.date || 'N/A'}</p>
+                                    <p>Passengers/Guests: ${bookingData.passengers || bookingData.guests || 1}</p>
+                                </div>
+                            `;
+                    }
+                }
+                
+                // For hotel, show hotel name as main heading
+                if (bookingData.type === 'hotel') {
+                    // Format check-in/check-out dates
+                    function formatDate(dateStr) {
+                        if (!dateStr) return 'N/A';
+                        const d = new Date(dateStr);
+                        if (isNaN(d.getTime())) return dateStr;
+                        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                    // Format guests
+                    let guestsText = 'N/A';
+                    if (bookingData.guests) {
+                        if (typeof bookingData.guests === 'string' && bookingData.guests.match(/\d+/)) {
+                            guestsText = bookingData.guests;
+                        } else if (typeof bookingData.guests === 'number') {
+                            guestsText = bookingData.guests + (bookingData.guests === 1 ? ' Guest' : ' Guests');
+                        }
+                    }
+                    summaryContainer.innerHTML = `
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-2xl mr-2">${getServiceIcon('hotel')}</span>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">${bookingData.service || bookingData.hotel_name || 'Hotel'}</h3>
+                                    <p class="text-sm text-gray-600">${bookingData.location || bookingData.address || ''}</p>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <p><strong>Hotel:</strong> ${bookingData.service || bookingData.hotel_name || 'N/A'}</p>
+                                <p><strong>Address:</strong> ${bookingData.location || bookingData.address || 'N/A'}</p>
+                                <p><strong>Check-in:</strong> ${formatDate(bookingData.check_in)}</p>
+                                <p><strong>Check-out:</strong> ${formatDate(bookingData.check_out)}</p>
+                                <p><strong>Nights:</strong> ${bookingData.nights || 1}</p>
+                                <p><strong>Guests:</strong> ${guestsText}</p>
+                                <p><strong>Room Type:</strong> ${bookingData.room_type || bookingData.room || 'N/A'}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    summaryContainer.innerHTML = `
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-2xl mr-2">${getServiceIcon(bookingData.type)}</span>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">${bookingData.service}</h3>
+                                    <p class="text-sm text-gray-600">${bookingData.route || bookingData.location || ''}</p>
+                                </div>
+                            </div>
+                            ${serviceDetails}
+                        </div>
+                    `;
+                }
+            }
+
+            // After rendering the summary, update the totals from bookingData if available
+            const finalTotalElem = document.getElementById('finalTotal');
+            if (finalTotalElem && bookingData) {
+                // Try different possible total fields
+                let totalAmount = bookingData.amount || bookingData.total || bookingData.total_amount;
+                
+                // If no direct total, try to calculate from components
+                if (!totalAmount) {
+                    const subtotal = bookingData.base_price || bookingData.subtotal;
+                    const taxes = bookingData.taxes || bookingData.tax_amount;
+                    if (subtotal && taxes) {
+                        totalAmount = subtotal + taxes;
+                    }
+                }
+                
+                if (totalAmount) {
+                    // Ensure it's formatted as currency
+                    if (typeof totalAmount === 'string' && totalAmount.includes('₹')) {
+                        finalTotalElem.textContent = totalAmount;
+                    } else {
+                        finalTotalElem.textContent = `₹${parseFloat(totalAmount).toLocaleString()}`;
+                    }
+                }
+            }
+            // Optionally update subtotal and GST if you store them in bookingData
+            // const subtotalElem = document.getElementById('subtotal');
+            // if (subtotalElem && bookingData.subtotal) {
+            //     subtotalElem.textContent = bookingData.subtotal;
+            // }
+            // const gstElem = document.getElementById('gst');
+            // if (gstElem && bookingData.gst) {
+            //     gstElem.textContent = bookingData.gst;
+            // }
+        }
+
+        function getServiceIcon(type) {
+            const icons = {
+                flight: '✈️',
+                hotel: '🏨',
+                train: '🚆',
+                bus: '🚌',
+                car: '🚗',
+                package: '📦'
+            };
+            return icons[type] || '🎫';
+        }
+
+        function setupPaymentTabs() {
+            const tabs = document.querySelectorAll('.payment-tab');
+            const contents = document.querySelectorAll('.payment-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+
+                    // Remove active class from all tabs
+                    tabs.forEach(t => {
+                        t.classList.remove('active', 'border-primary-600', 'text-primary-600');
+                        t.classList.add('border-transparent', 'text-gray-500');
+                    });
+
+                    // Add active class to clicked tab
+                    this.classList.add('active', 'border-primary-600', 'text-primary-600');
+                    this.classList.remove('border-transparent', 'text-gray-500');
+
+                    // Hide all content
+                    contents.forEach(content => content.classList.add('hidden'));
+
+                    // Show target content
+                    document.getElementById(`${targetTab}-payment`).classList.remove('hidden');
+                });
+            });
+        }
+
+        function setupCardFormatting() {
+            const cardNumberInput = document.querySelector('input[placeholder="1234 5678 9012 3456"]');
+            const expiryInput = document.querySelector('input[placeholder="MM/YY"]');
+
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                    e.target.value = formattedValue;
+                });
+            }
+
+            if (expiryInput) {
+                expiryInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 2) {
+                        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    }
+                    e.target.value = value;
+                });
+            }
+        }
+
+        function processPayment() {
+            // Show loading state
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Processing...';
+            button.disabled = true;
+
+            // Get booking data
+            const bookingData = JSON.parse(localStorage.getItem('currentBooking') || '{}');
+            console.log('Current booking data:', bookingData);
+
+            // Collect billing address fields
+            const address = document.querySelector('textarea[placeholder="Enter your full address"]')?.value || '';
+            const city = document.querySelector('input[placeholder="Enter city"]')?.value || '';
+            let state = '';
+            const stateSelect = document.querySelector('select');
+            if (stateSelect) {
+                state = stateSelect.value;
+            }
+            const pin = document.querySelector('input[placeholder="Enter PIN code"]')?.value || '';
+            let country = 'India';
+            const selects = document.querySelectorAll('select');
+            if (selects.length > 1) {
+                country = selects[selects.length - 1].value;
+            }
+
+
+            // Always use contact_info from bookingData (from localStorage/currentBooking)
+            let contact_info = {
+                email: bookingData.email || (bookingData.contact_info && bookingData.contact_info.email) || '',
+                phone: bookingData.phone || (bookingData.contact_info && bookingData.contact_info.phone) || ''
+            };
+            // Debug: log contact_info to verify
+            console.log('Contact Info:', contact_info);
+            // Build details object for all services
+            let details = bookingData.details || {};
+            // Try to include all relevant info for each service type
+            switch (bookingData.type) {
+                case 'hotel':
+                    details.hotel = details.hotel || {
+                        name: bookingData.service || bookingData.hotel_name || '',
+                        address: bookingData.location || bookingData.hotel_address || '',
+                        room_type: bookingData.room_type || bookingData.room || '',
+                        check_in: bookingData.check_in || bookingData.check_in_date || '',
+                        check_out: bookingData.check_out || bookingData.check_out_date || '',
+                        guests: bookingData.guests || ''
+                    };
+                    break;
+                case 'flight':
+                    details.flight = details.flight || {
+                        airline: bookingData.airline || '',
+                        flight_number: bookingData.flight?.flight_number || bookingData.flight_number || '',
+                        departure: bookingData.departure || '',
+                        arrival: bookingData.arrival || '',
+                        departure_time: bookingData.departureTime || '',
+                        arrival_time: bookingData.arrivalTime || '',
+                        duration: bookingData.duration || '',
+                        passengers: bookingData.passengers || 1
+                    };
+                    break;
+                case 'train':
+                    details.train = details.train || {
+                        train_name: bookingData.train_name || '',
+                        train_number: bookingData.train_number || '',
+                        route: bookingData.route || '',
+                        departure_time: bookingData.departure_time || '',
+                        arrival_time: bookingData.arrival_time || '',
+                        class: bookingData.class || '',
+                        passengers: bookingData.passengers || ''
+                    };
+                    break;
+                case 'bus':
+                    details.bus = details.bus || {
+                        bus_type: bookingData.bus_type || '',
+                        route: bookingData.route || '',
+                        departure_time: bookingData.departure_time || '',
+                        arrival_time: bookingData.arrival_time || '',
+                        passengers: bookingData.passengers || ''
+                    };
+                    break;
+                case 'car':
+                    details.car = details.car || {
+                        car: bookingData.service || '',
+                        pickup_location: bookingData.trip?.pickup_location || '',
+                        drop_location: bookingData.trip?.drop_location || '',
+                        pickup_date: bookingData.trip?.pickup_date || '',
+                        pickup_time: bookingData.trip?.pickup_time || '',
+                        distance: bookingData.distance || ''
+                    };
+                    break;
+                default:
+                    // For other/unknown types, just store the whole bookingData
+                    details = bookingData;
+            }
+
+            const bookingPayload = {
+                type: bookingData.type || 'unknown',
+                service_type: bookingData.type || 'unknown',
+                service_id: bookingData.service_id || bookingData.flight?.flight_number || bookingData.hotel?.property_token || '',
+                num_passengers: parseInt(bookingData.passengers || bookingData.num_passengers || 1),
+                num_guests: bookingData.guests ? parseInt(bookingData.guests.match(/\d+/)?.[0] || '0') : 0,
+                fare_total: parseFloat(document.getElementById('finalTotal').textContent.replace(/[^\d.]/g, '')) || 0,
+                payment_status: 'success',
+                created_at: new Date().toISOString(),
+                billing_address: {
+                    address,
+                    city,
+                    state,
+                    pin,
+                    country
+                },
+                contact_info: contact_info,
+                details: details
+            };
+
+            console.log('Sending booking payload:', bookingPayload);
+
+            // Save booking to Appwrite
+            fetch('/api/save-booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingPayload)
+            })
+            .then(response => response.json())
+            .then(bookingRes => {
+                console.log('Booking response:', bookingRes);
+                if (!bookingRes.success) throw new Error(bookingRes.error || bookingRes.message || 'Booking save failed');
+                const bookingId = bookingRes.booking_id;
+                // Generate transactionId once so it can be used in both payload and confirmation
+                const transactionId = 'TXN' + Date.now();
+                // Prepare payment data for backend
+                const paymentPayload = {
+                    booking_id: bookingId,
+                    amount: parseFloat(document.getElementById('finalTotal').textContent.replace(/[^\d.]/g, '')) || 0,
+                    method: document.querySelector('.payment-tab.active').textContent.trim(),
+                    status: 'success',
+                    transaction_id: transactionId
+                };
+                console.log('Sending payment payload:', paymentPayload);
+                // Save payment to Appwrite
+                return fetch('/api/save-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paymentPayload)
+                }).then(response => response.json()).then(paymentRes => {
+                    // Return both responses so we can access bookingId and transactionId
+                    return { paymentRes, bookingId, transactionId };
+                })
+                .then(({ paymentRes, bookingId, transactionId }) => {
+                    console.log('Payment response:', paymentRes);
+                    if (!paymentRes.success) throw new Error(paymentRes.error || paymentRes.message || 'Payment save failed');
+                    // Store complete booking confirmation for confirmation page
+                    localStorage.setItem('bookingConfirmation', JSON.stringify({
+                        ...bookingData, // Include all original booking data
+                        ...bookingPayload, // Include processed booking data
+                        bookingId: bookingId,
+                        totalAmount: bookingPayload.fare_total,
+                        paymentMethod: document.querySelector('.payment-tab.active').textContent.trim(),
+                        status: 'confirmed',
+                        transactionId: transactionId,
+                        paymentDate: new Date().toISOString()
+                    }));
+                    window.location.href = 'confirmation.html';
+                });
+            })
+            .catch(error => {
+                console.error('Payment error:', error);
+                alert('Payment processing failed. Please try again.');
+                button.textContent = originalText;
+                button.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
