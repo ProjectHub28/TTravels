@@ -12,3 +12,7 @@ playsound==1.2.2
 numpy
 pydub
 requests
+# OpenAI Whisper (imported as `whisper`) and PyTorch runtime
+openai-whisper
+torch
+torchaudio
