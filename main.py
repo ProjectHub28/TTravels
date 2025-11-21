@@ -32,7 +32,7 @@ from services.text_to_speech import tts_service
 
 # Speech-to-text and translate service (used in other endpoints)
 from services.speech_to_text import stt_service
-from services.translate import translation_service
+# from services.translate import translation_service
 from services.notification import notification_service
 
 # Trip planner for modifications
@@ -1060,40 +1060,40 @@ def text_to_speech():
         return jsonify({"error": "Text-to-speech failed", "details": str(e)}), 500
 
 # Translation endpoint
-@app.route('/api/translate', methods=['POST'])
-def translate_text():
-    """Translate text between languages."""
-    try:
-        data = request.get_json()
-        text = data.get("text", "")
-        target_language = data.get("target_language", "en")
-        source_language = data.get("source_language")  # Optional
+# @app.route('/api/translate', methods=['POST'])
+# def translate_text():
+#     """Translate text between languages."""
+#     try:
+#         data = request.get_json()
+#         text = data.get("text", "")
+#         target_language = data.get("target_language", "en")
+#         source_language = data.get("source_language")  # Optional
         
-        if not text:
-            return jsonify({"error": "No text provided"}), 400
+#         if not text:
+#             return jsonify({"error": "No text provided"}), 400
         
-        if source_language:
-            # Direct translation
-            translated_text = translation_service.translate_text(
-                text, source_language, target_language
-            )
-            detected_language = source_language
-        else:
-            # Detect and translate
-            translated_text, detected_language, confidence = translation_service.detect_and_translate(
-                text, target_language
-            )
+#         if source_language:
+#             # Direct translation
+#             translated_text = translation_service.translate_text(
+#                 text, source_language, target_language
+#             )
+#             detected_language = source_language
+#         else:
+#             # Detect and translate
+#             translated_text, detected_language, confidence = translation_service.detect_and_translate(
+#                 text, target_language
+#             )
         
-        return jsonify({
-            "translated_text": translated_text,
-            "detected_language": detected_language,
-            "target_language": target_language,
-            "success": True
-        })
+#         return jsonify({
+#             "translated_text": translated_text,
+#             "detected_language": detected_language,
+#             "target_language": target_language,
+#             "success": True
+#         })
         
-    except Exception as e:
-        print(f"Translation error: {str(e)}")
-        return jsonify({"error": "Translation failed", "details": str(e)}), 500
+#     except Exception as e:
+#         print(f"Translation error: {str(e)}")
+#         return jsonify({"error": "Translation failed", "details": str(e)}), 500
 
 # Previous voice_chat endpoint (deprecated)
 # The old, multi-step `voice_chat` handler is commented out because the
@@ -1125,18 +1125,18 @@ def unified_voice_chat():
         return chat_text()
     
 # Get supported languages endpoint
-@app.route('/api/languages', methods=['GET'])
-def get_languages():
-    """Get supported languages for translation."""
-    try:
-        languages = translation_service.get_supported_languages()
-        return jsonify({
-            "languages": languages,
-            "success": True
-        })
-    except Exception as e:
-        print(f"Get languages error: {str(e)}")
-        return jsonify({"error": "Failed to get languages", "details": str(e)}), 500
+# @app.route('/api/languages', methods=['GET'])
+# def get_languages():
+#     """Get supported languages for translation."""
+#     try:
+#         languages = translation_service.get_supported_languages()
+#         return jsonify({
+#             "languages": languages,
+#             "success": True
+#         })
+#     except Exception as e:
+#         print(f"Get languages error: {str(e)}")
+#         return jsonify({"error": "Failed to get languages", "details": str(e)}), 500
 
 
 # ===== New separate endpoints: /api/chat-text and /api/chat-voice =====
