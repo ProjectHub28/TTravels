@@ -9,21 +9,26 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class SpeechToTextService:
-    def __init__(self, model_size: str = "base"):
+    def __init__(self, model_size: str = None):
         """
         Initialize the Speech-to-Text service using OpenAI Whisper.
         
         Args:
-            model_size: Whisper model size ("tiny", "base", "small", "medium", "large")
+            model_size: Whisper model size ("tiny", "base", "small", "medium", "large").
+                        If None, the `WHISPER_MODEL` env var is used (defaults to "tiny").
         """
-        self.model_size = model_size
+        # Respect environment variable first, otherwise fallback to provided arg.
+        env_model = os.getenv("WHISPER_MODEL")
+        self.model_size = env_model if env_model else (model_size or "tiny")
         self.model = None
-        self._load_model()
+        # Note: don't auto-load heavy models during import when possible.
+        # Loading happens when the service is instantiated.
     
     def _load_model(self):
         """Load the Whisper model."""
         try:
             logger.info(f"Loading Whisper model: {self.model_size}")
+            # Force CPU to avoid GPU allocations on small hosts
             self.model = whisper.load_model(self.model_size)
             logger.info("Whisper model loaded successfully")
         except Exception as e:
@@ -115,8 +120,33 @@ class SpeechToTextService:
                 except OSError:
                     pass
 
-# Global instance
-stt_service = SpeechToTextService()
+class _LazySTT:
+    """Proxy that lazily instantiates the real SpeechToTextService on first use.
+
+    This avoids loading a large Whisper model at module import time (which
+    causes high memory usage and can OOM on small hosts like Render's 512Mi
+    instances). The real model is only loaded when a method/property is
+    actually accessed.
+    """
+    def __init__(self):
+        self._service = None
+
+    def _ensure(self):
+        if self._service is None:
+            model_name = os.getenv("WHISPER_MODEL", "tiny")
+            logger.info(f"Instantiating SpeechToTextService with model={model_name}")
+            svc = SpeechToTextService(model_size=model_name)
+            # load model now (may raise MemoryError if insufficient RAM)
+            svc._load_model()
+            self._service = svc
+
+    def __getattr__(self, item):
+        self._ensure()
+        return getattr(self._service, item)
+
+
+# Global lazy instance — safe to import even on low-memory hosts.
+stt_service = _LazySTT()
 
 def transcribe_audio(file_path: str) -> str:
     """
